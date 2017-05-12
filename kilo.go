@@ -61,9 +61,9 @@ func main() {
 		var r rune
 		r = rune(buffer[0])
 		if (strconv.IsPrint(r)) {
-			fmt.Printf("%d  %c\n", buffer[0], r)
+			fmt.Printf("%d  %c\r\n", buffer[0], r)
 		} else {
-			fmt.Printf("%d\n", buffer[0])
+			fmt.Printf("%d\r\n", buffer[0])
 		}
 	}
 }
