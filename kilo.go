@@ -38,14 +38,13 @@ func enableRawMode() {
 	origTermios, _ = TcGetAttr(os.Stdin.Fd())
 	var raw Termios
 	raw = *origTermios
-	raw.Lflag &^= syscall.ECHO
+	raw.Lflag &^= syscall.ECHO | syscall.ICANON
 	if e := TcSetAttr(os.Stdin.Fd(), &raw); e != nil {
 		fmt.Fprintf(os.Stderr, "Problem enabling raw mode: %s\n", e)
 	}
 }
 
 func disableRawMode() {
-fmt.Fprintf(os.Stderr, "Enter disableRawmode\n")
 	if e := TcSetAttr(os.Stdin.Fd(), origTermios); e != nil {
 		fmt.Fprintf(os.Stderr, "Problem disabling raw mode: %s\n", e)
 	}
