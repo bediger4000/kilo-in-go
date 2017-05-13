@@ -8,6 +8,8 @@ import (
 	"unsafe"
 )
 
+/*** data ***/
+
 type Termios struct {
 	Iflag  uint32
 	Oflag  uint32
@@ -19,6 +21,8 @@ type Termios struct {
 }
 
 var origTermios *Termios
+
+/*** terminal ***/
 
 func TcSetAttr(fd uintptr, termios *Termios) error {
 	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, fd, uintptr(syscall.TCSETS+1), uintptr(unsafe.Pointer(termios))); err != 0 {
@@ -55,6 +59,8 @@ func disableRawMode() {
 		log.Fatalf("Problem disabling raw mode: %s\n", e)
 	}
 }
+
+/*** init ***/
 
 func main() {
 	enableRawMode()
