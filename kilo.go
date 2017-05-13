@@ -40,9 +40,10 @@ func enableRawMode() {
 	origTermios = TcGetAttr(os.Stdin.Fd())
 	var raw Termios
 	raw = *origTermios
-	raw.Iflag &^= syscall.IXON | syscall.ICRNL
+	raw.Iflag &^= syscall.IXON | syscall.ICRNL | syscall.INPCK | syscall.ISTRIP | syscall.IXON
 	raw.Oflag &^= syscall.OPOST
-	raw.Lflag &^= syscall.ECHO | syscall.ICANON | syscall.ISIG
+	raw.Cflag |= syscall.CS8
+	raw.Lflag &^= syscall.ECHO | syscall.ICANON | syscall.IEXTEN | syscall.ISIG
 	if e := TcSetAttr(os.Stdin.Fd(), &raw); e != nil {
 		fmt.Fprintf(os.Stderr, "Problem enabling raw mode: %s\n", e)
 		os.Exit(2)
