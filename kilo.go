@@ -99,6 +99,14 @@ func editorProcessKeypress() {
 func editorRefreshScreen() {
 	io.WriteString(os.Stdout, "\x1b[2J");
 	io.WriteString(os.Stdout, "\x1b[H");
+	editorDrawRows()
+	io.WriteString(os.Stdout, "\x1b[H");
+}
+
+func editorDrawRows() {
+	for y := 0; y < 24; y++ {
+		io.WriteString(os.Stdout, "~\r\n");
+	}
 }
 
 /*** init ***/
