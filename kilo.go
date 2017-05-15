@@ -26,6 +26,8 @@ var origTermios *Termios
 
 func die(err error) {
 	disableRawMode()
+	io.WriteString(os.Stdout, "\x1b[2J");
+	io.WriteString(os.Stdout, "\x1b[H");
 	log.Fatal(err)
 }
 
@@ -85,6 +87,8 @@ func editorProcessKeypress() {
 	c := editorReadKey()
 	switch c {
 	case ('q' & 0x1f):
+		io.WriteString(os.Stdout, "\x1b[2J");
+		io.WriteString(os.Stdout, "\x1b[H");
 		disableRawMode()
 		os.Exit(0)
 	}
