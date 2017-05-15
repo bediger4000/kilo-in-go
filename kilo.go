@@ -94,6 +94,7 @@ func editorProcessKeypress() {
 
 func editorRefreshScreen() {
 	io.WriteString(os.Stdout, "\x1b[2J");
+	io.WriteString(os.Stdout, "\x1b[H");
 }
 
 /*** init ***/
