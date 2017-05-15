@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"syscall"
@@ -23,6 +22,11 @@ type Termios struct {
 var origTermios *Termios
 
 /*** terminal ***/
+
+func die(err error) {
+	disableRawMode()
+	log.Fatal(err)
+}
 
 func TcSetAttr(fd uintptr, termios *Termios) error {
 	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, fd, uintptr(syscall.TCSETS+1), uintptr(unsafe.Pointer(termios))); err != 0 {
@@ -60,26 +64,38 @@ func disableRawMode() {
 	}
 }
 
+func editorReadKey() byte {
+	var buffer [1]byte
+	var cc int
+	var err error
+	for cc, err = os.Stdin.Read(buffer[:]);
+		cc != 1;
+		cc, err = os.Stdin.Read(buffer[:]) {
+	}
+	if err != nil {
+		die(err)
+	}
+	return buffer[0]
+}
+
+/*** input ***/
+
+func editorProcessKeypress() {
+	c := editorReadKey()
+	switch c {
+	case ('q' & 0x1f):
+		disableRawMode()
+		os.Exit(0)
+	}
+}
+
 /*** init ***/
 
 func main() {
 	enableRawMode()
 	defer disableRawMode()
-	buffer := make([]byte, 1)
-	var cc int
-	var err error
-	for cc, err = os.Stdin.Read(buffer);
-		buffer[0] != 'q' && cc >= 0;
-		cc, err = os.Stdin.Read(buffer) {
-		if (buffer[0] > 20 && buffer[0] < 0x7f) {
-			fmt.Printf("%3d  %c  %d\r\n", buffer[0], buffer[0], cc)
-		} else {
-			fmt.Printf("%3d      %d\r\n", buffer[0], cc)
-		}
-		buffer[0] = 0
-	}
-	if err != nil {
-		disableRawMode()
-		log.Fatal(err)
+
+	for {
+		editorProcessKeypress()
 	}
 }
