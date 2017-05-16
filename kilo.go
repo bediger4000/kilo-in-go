@@ -24,6 +24,14 @@ type editorConfig struct {
 	origTermios *Termios
 }
 
+type WinSize struct {
+    Row    uint16
+    Col    uint16
+    Xpixel uint16
+    Ypixel uint16
+}
+
+
 var E editorConfig
 
 /*** terminal ***/
@@ -36,6 +44,7 @@ func die(err error) {
 }
 
 func TcSetAttr(fd uintptr, termios *Termios) error {
+	// TCSETS+1 == TCSETSW, because TCSAFLUSH doesn't exist
 	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, fd, uintptr(syscall.TCSETS+1), uintptr(unsafe.Pointer(termios))); err != 0 {
 		return err
 	}
@@ -45,7 +54,7 @@ func TcSetAttr(fd uintptr, termios *Termios) error {
 func TcGetAttr(fd uintptr) *Termios {
 	var termios = &Termios{}
 	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, fd, syscall.TCGETS, uintptr(unsafe.Pointer(termios))); err != 0 {
-		log.Fatalf("Problem getting termial attributes: %s\n", err)
+		log.Fatalf("Problem getting terminal attributes: %s\n", err)
 	}
 	return termios
 }
@@ -83,6 +92,23 @@ func editorReadKey() byte {
 		die(err)
 	}
 	return buffer[0]
+}
+
+func getWindowSize(rows *int, cols *int) int {
+	var w WinSize
+	for {
+        _, _, err := syscall.Syscall(syscall.SYS_IOCTL,
+            os.Stdout.Fd(),
+            syscall.TIOCGWINSZ,
+            uintptr(unsafe.Pointer(&w)),
+        )
+        if err == 0 {  // type syscall.Errno
+			*rows = int(w.Row)
+			*cols = int(w.Col)
+            return 0
+        }
+	}
+	return -1
 }
 
 /*** input ***/
