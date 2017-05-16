@@ -20,7 +20,11 @@ type Termios struct {
 	Ospeed uint32
 }
 
-var origTermios *Termios
+type editorConfig struct {
+	origTermios *Termios
+}
+
+var E editorConfig
 
 /*** terminal ***/
 
@@ -47,9 +51,9 @@ func TcGetAttr(fd uintptr) *Termios {
 }
 
 func enableRawMode() {
-	origTermios = TcGetAttr(os.Stdin.Fd())
+	E.origTermios = TcGetAttr(os.Stdin.Fd())
 	var raw Termios
-	raw = *origTermios
+	raw = *E.origTermios
 	raw.Iflag &^= syscall.BRKINT | syscall.ICRNL | syscall.INPCK | syscall.ISTRIP | syscall.IXON
 	raw.Oflag &^= syscall.OPOST
 	raw.Cflag |= syscall.CS8
@@ -62,7 +66,7 @@ func enableRawMode() {
 }
 
 func disableRawMode() {
-	if e := TcSetAttr(os.Stdin.Fd(), origTermios); e != nil {
+	if e := TcSetAttr(os.Stdin.Fd(), E.origTermios); e != nil {
 		log.Fatalf("Problem disabling raw mode: %s\n", e)
 	}
 }
