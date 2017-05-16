@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -21,16 +22,17 @@ type Termios struct {
 }
 
 type editorConfig struct {
+	screenRows  int
+	screenCols  int
 	origTermios *Termios
 }
 
 type WinSize struct {
-    Row    uint16
-    Col    uint16
-    Xpixel uint16
-    Ypixel uint16
+	Row    uint16
+	Col    uint16
+	Xpixel uint16
+	Ypixel uint16
 }
-
 
 var E editorConfig
 
@@ -38,8 +40,8 @@ var E editorConfig
 
 func die(err error) {
 	disableRawMode()
-	io.WriteString(os.Stdout, "\x1b[2J");
-	io.WriteString(os.Stdout, "\x1b[H");
+	io.WriteString(os.Stdout, "\x1b[2J")
+	io.WriteString(os.Stdout, "\x1b[H")
 	log.Fatal(err)
 }
 
@@ -84,9 +86,7 @@ func editorReadKey() byte {
 	var buffer [1]byte
 	var cc int
 	var err error
-	for cc, err = os.Stdin.Read(buffer[:]);
-		cc != 1;
-		cc, err = os.Stdin.Read(buffer[:]) {
+	for cc, err = os.Stdin.Read(buffer[:]); cc != 1; cc, err = os.Stdin.Read(buffer[:]) {
 	}
 	if err != nil {
 		die(err)
@@ -97,16 +97,16 @@ func editorReadKey() byte {
 func getWindowSize(rows *int, cols *int) int {
 	var w WinSize
 	for {
-        _, _, err := syscall.Syscall(syscall.SYS_IOCTL,
-            os.Stdout.Fd(),
-            syscall.TIOCGWINSZ,
-            uintptr(unsafe.Pointer(&w)),
-        )
-        if err == 0 {  // type syscall.Errno
+		_, _, err := syscall.Syscall(syscall.SYS_IOCTL,
+			os.Stdout.Fd(),
+			syscall.TIOCGWINSZ,
+			uintptr(unsafe.Pointer(&w)),
+		)
+		if err == 0 { // type syscall.Errno
 			*rows = int(w.Row)
 			*cols = int(w.Col)
-            return 0
-        }
+			return 0
+		}
 	}
 	return -1
 }
@@ -117,8 +117,8 @@ func editorProcessKeypress() {
 	c := editorReadKey()
 	switch c {
 	case ('q' & 0x1f):
-		io.WriteString(os.Stdout, "\x1b[2J");
-		io.WriteString(os.Stdout, "\x1b[H");
+		io.WriteString(os.Stdout, "\x1b[2J")
+		io.WriteString(os.Stdout, "\x1b[H")
 		disableRawMode()
 		os.Exit(0)
 	}
@@ -127,23 +127,30 @@ func editorProcessKeypress() {
 /*** output ***/
 
 func editorRefreshScreen() {
-	io.WriteString(os.Stdout, "\x1b[2J");
-	io.WriteString(os.Stdout, "\x1b[H");
+	io.WriteString(os.Stdout, "\x1b[2J")
+	io.WriteString(os.Stdout, "\x1b[H")
 	editorDrawRows()
-	io.WriteString(os.Stdout, "\x1b[H");
+	io.WriteString(os.Stdout, "\x1b[H")
 }
 
 func editorDrawRows() {
 	for y := 0; y < 24; y++ {
-		io.WriteString(os.Stdout, "~\r\n");
+		io.WriteString(os.Stdout, "~\r\n")
 	}
 }
 
 /*** init ***/
 
+func initEditor() {
+	if getWindowSize(&E.screenRows, &E.screenCols) == -1 {
+		die(fmt.Errorf("couldn't get screen size"))
+	}
+}
+
 func main() {
 	enableRawMode()
 	defer disableRawMode()
+	initEditor()
 
 	for {
 		editorRefreshScreen()
