@@ -94,6 +94,23 @@ func editorReadKey() byte {
 	return buffer[0]
 }
 
+func getCursorPosition(rows *int, cols *int) int {
+	io.WriteString(os.Stdout, "\x1b[6n")
+	fmt.Printf("\r\n")
+	var buffer [1]byte
+	var cc int
+	for cc, _ = os.Stdin.Read(buffer[:]); cc == 1; cc, _ = os.Stdin.Read(buffer[:]) {
+		if buffer[0] > 20 && buffer[0] < 0x7e {
+		} else {
+			fmt.Printf("%d\r\n", buffer[0])
+		}
+			fmt.Printf("%d ('%c')\r\n", buffer[0], buffer[0])
+	}
+
+	editorReadKey()
+	return -1;
+}
+
 func getWindowSize(rows *int, cols *int) int {
 	var w WinSize
 	_, _, err := syscall.Syscall(syscall.SYS_IOCTL,
@@ -103,8 +120,7 @@ func getWindowSize(rows *int, cols *int) int {
 	)
 	if true {
 		io.WriteString(os.Stdout, "\x1b[999C\x1b[999B")
-		editorReadKey()
-		return -1
+		return getCursorPosition(rows, cols)
 	}
 	if err == 0 { // type syscall.Errno
 		*rows = int(w.Row)
