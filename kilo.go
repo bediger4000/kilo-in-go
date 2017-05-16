@@ -96,17 +96,20 @@ func editorReadKey() byte {
 
 func getWindowSize(rows *int, cols *int) int {
 	var w WinSize
-	for {
-		_, _, err := syscall.Syscall(syscall.SYS_IOCTL,
-			os.Stdout.Fd(),
-			syscall.TIOCGWINSZ,
-			uintptr(unsafe.Pointer(&w)),
-		)
-		if err == 0 { // type syscall.Errno
-			*rows = int(w.Row)
-			*cols = int(w.Col)
-			return 0
-		}
+	_, _, err := syscall.Syscall(syscall.SYS_IOCTL,
+		os.Stdout.Fd(),
+		syscall.TIOCGWINSZ,
+		uintptr(unsafe.Pointer(&w)),
+	)
+	if true {
+		io.WriteString(os.Stdout, "\x1b[999C\x1b[999B")
+		editorReadKey()
+		return -1
+	}
+	if err == 0 { // type syscall.Errno
+		*rows = int(w.Row)
+		*cols = int(w.Col)
+		return 0
 	}
 	return -1
 }
@@ -134,7 +137,7 @@ func editorRefreshScreen() {
 }
 
 func editorDrawRows() {
-	for y := 0; y < 24; y++ {
+	for y := 0; y < E.screenRows; y++ {
 		io.WriteString(os.Stdout, "~\r\n")
 	}
 }
