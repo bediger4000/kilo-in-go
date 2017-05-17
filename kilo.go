@@ -97,6 +97,28 @@ func editorReadKey() byte {
 	if err != nil {
 		die(err)
 	}
+	if buffer[0] == '\x1b' {
+		var seq [2]byte
+		cc, _ = os.Stdin.Read(seq[:])
+		if cc != 2 {
+			return '\x1b'
+		}
+
+		if seq[0] == '[' {
+			switch seq[1] {
+			case 'A':
+				return 'w'
+			case 'B':
+				return 's'
+			case 'C':
+				return 'd'
+			case 'D':
+				return 'a'
+			}
+		}
+
+		return '\x1b'
+	}
 	return buffer[0]
 }
 
