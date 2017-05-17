@@ -9,6 +9,10 @@ import (
 	"unsafe"
 )
 
+/*** defines ***/
+
+const KILO_VERSION = "0.0.1"
+
 /*** data ***/
 
 type Termios struct {
@@ -180,9 +184,16 @@ func editorRefreshScreen() {
 
 func editorDrawRows(ab *abuf) {
 	for y := 0; y < E.screenRows-1; y++ {
-		ab.abAppend("~\x1b[K\r\n")
+		if y == E.screenRows/3 {
+			ab.abAppend(fmt.Sprintf("Kilo editor -- version %s", KILO_VERSION))
+		} else {
+			ab.abAppend("~")
+		}
+		ab.abAppend("\x1b[K")
+		if y < E.screenRows - 1 {
+			ab.abAppend("\r\n")
+		}
 	}
-	ab.abAppend("~")
 }
 
 /*** init ***/
