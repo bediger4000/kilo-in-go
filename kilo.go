@@ -171,7 +171,6 @@ func (p *abuf) abAppend(s string) {
 func editorRefreshScreen() {
 	var ab abuf
 	ab.abAppend("\x1b[25l")
-	ab.abAppend("\x1b[2J")
 	ab.abAppend("\x1b[H")
 	editorDrawRows(&ab)
 	ab.abAppend("\x1b[H")
@@ -181,7 +180,7 @@ func editorRefreshScreen() {
 
 func editorDrawRows(ab *abuf) {
 	for y := 0; y < E.screenRows-1; y++ {
-		ab.abAppend("~\r\n")
+		ab.abAppend("~\x1b[K\r\n")
 	}
 	ab.abAppend("~")
 }
