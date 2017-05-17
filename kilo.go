@@ -177,13 +177,13 @@ func getWindowSize(rows *int, cols *int) int {
 
 func editorMoveCursor(key byte) {
 	switch key {
-	case 'a':
+	case ARROW_LEFT:
 		E.cx--
-	case 'd':
+	case ARROW_RIGHT:
 		E.cx++
-	case 'w':
+	case ARROW_UP:
 		E.cy--
-	case 's':
+	case ARROW_DOWN:
 		E.cy++
 	}
 }
@@ -196,7 +196,7 @@ func editorProcessKeypress() {
 		io.WriteString(os.Stdout, "\x1b[H")
 		disableRawMode()
 		os.Exit(0)
-	case 'w', 'a', 's', 'd':
+	case ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT:
 		editorMoveCursor(c)
 	}
 }
