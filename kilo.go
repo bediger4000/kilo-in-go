@@ -128,11 +128,10 @@ func getWindowSize(rows *int, cols *int) int {
 		syscall.TIOCGWINSZ,
 		uintptr(unsafe.Pointer(&w)),
 	)
-	if true {
+	if err != 0 { // type syscall.Errno
 		io.WriteString(os.Stdout, "\x1b[999C\x1b[999B")
 		return getCursorPosition(rows, cols)
-	}
-	if err == 0 { // type syscall.Errno
+	} else {
 		*rows = int(w.Row)
 		*cols = int(w.Col)
 		return 0
