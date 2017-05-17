@@ -154,31 +154,34 @@ func editorProcessKeypress() {
 
 /*** append buffer ***/
 
-type abuf []byte
-
-func abufInit() abuf {
-	var p abuf
-	return p
+type abuf struct {
+	buf []byte
 }
 
-func (p abuf)abAppend(s []byte) {
-	p = append(p, s...)
+func (p abuf) String() string {
+	return string(p.buf)
+}
+
+func (p *abuf) abAppend(s string) {
+	p.buf = append(p.buf, []byte(s)...)
 }
 
 /*** output ***/
 
 func editorRefreshScreen() {
-	io.WriteString(os.Stdout, "\x1b[2J")
-	io.WriteString(os.Stdout, "\x1b[H")
-	editorDrawRows()
-	io.WriteString(os.Stdout, "\x1b[H")
+	var ab abuf
+	ab.abAppend("\x1b[2J")
+	ab.abAppend("\x1b[H")
+	editorDrawRows(&ab)
+	ab.abAppend("\x1b[H")
+	io.WriteString(os.Stdout, ab.String())
 }
 
-func editorDrawRows() {
-	for y := 0; y < E.screenRows - 1; y++ {
-		io.WriteString(os.Stdout, "~\r\n")
+func editorDrawRows(ab *abuf) {
+	for y := 0; y < E.screenRows-1; y++ {
+		ab.abAppend("~\r\n")
 	}
-	io.WriteString(os.Stdout, "~")
+	ab.abAppend("~")
 }
 
 /*** init ***/
