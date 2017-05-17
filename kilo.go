@@ -147,6 +147,19 @@ func getWindowSize(rows *int, cols *int) int {
 
 /*** input ***/
 
+func editorMoveCursor(key byte) {
+	switch key {
+	case 'a':
+		E.cx--
+	case 'd':
+		E.cx++
+	case 'w':
+		E.cy--
+	case 's':
+		E.cy++
+	}
+}
+
 func editorProcessKeypress() {
 	c := editorReadKey()
 	switch c {
@@ -155,6 +168,8 @@ func editorProcessKeypress() {
 		io.WriteString(os.Stdout, "\x1b[H")
 		disableRawMode()
 		os.Exit(0)
+	case 'w', 'a', 's', 'd':
+		editorMoveCursor(c)
 	}
 }
 
@@ -179,7 +194,7 @@ func editorRefreshScreen() {
 	ab.abAppend("\x1b[25l")
 	ab.abAppend("\x1b[H")
 	editorDrawRows(&ab)
-	ab.abAppend("\x1b[H")
+	ab.abAppend(fmt.Sprintf("\x1b[%d;%dH", E.cy+1, E.cx+1))
 	ab.abAppend("\x1b[25h")
 	io.WriteString(os.Stdout, ab.String())
 }
