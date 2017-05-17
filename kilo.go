@@ -156,6 +156,15 @@ func editorProcessKeypress() {
 
 type abuf []byte
 
+func abufInit() abuf {
+	var p abuf
+	return p
+}
+
+func (p abuf)abAppend(s []byte) {
+	p = append(p, s...)
+}
+
 /*** output ***/
 
 func editorRefreshScreen() {
