@@ -220,6 +220,14 @@ func editorProcessKeypress() {
 		io.WriteString(os.Stdout, "\x1b[H")
 		disableRawMode()
 		os.Exit(0)
+	case PAGE_UP, PAGE_DOWN:
+		dir := ARROW_DOWN
+		if c == PAGE_UP {
+			dir = ARROW_UP
+		}
+		for times := E.screenRows; times > 0; times-- {
+			editorMoveCursor(dir)
+		}
 	case ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT:
 		editorMoveCursor(c)
 	}
