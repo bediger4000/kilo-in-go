@@ -96,19 +96,18 @@ func editorReadKey() byte {
 
 func getCursorPosition(rows *int, cols *int) int {
 	io.WriteString(os.Stdout, "\x1b[6n")
-	fmt.Printf("\r\n")
 	var buffer [1]byte
+	var buf    []byte
 	var cc int
 	for cc, _ = os.Stdin.Read(buffer[:]); cc == 1; cc, _ = os.Stdin.Read(buffer[:]) {
-		if buffer[0] > 20 && buffer[0] < 0x7e {
-		} else {
-			fmt.Printf("%d\r\n", buffer[0])
+		if buffer[0] == 'R' {
+			break;
 		}
-			fmt.Printf("%d ('%c')\r\n", buffer[0], buffer[0])
+		buf = append(buf, buffer[0])
 	}
-
+	fmt.Printf("\r\n%q\r\n", string(buf[1:]))
 	editorReadKey()
-	return -1;
+	return -1
 }
 
 func getWindowSize(rows *int, cols *int) int {
