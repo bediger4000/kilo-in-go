@@ -12,6 +12,12 @@ import (
 /*** defines ***/
 
 const KILO_VERSION = "0.0.1"
+const (
+	ARROW_LEFT  = 'a'
+	ARROW_RIGHT = 'd'
+	ARROW_UP    = 'w'
+	ARROW_DOWN  = 's'
+)
 
 /*** data ***/
 
@@ -107,13 +113,13 @@ func editorReadKey() byte {
 		if seq[0] == '[' {
 			switch seq[1] {
 			case 'A':
-				return 'w'
+				return ARROW_UP
 			case 'B':
-				return 's'
+				return ARROW_DOWN
 			case 'C':
-				return 'd'
+				return ARROW_RIGHT
 			case 'D':
-				return 'a'
+				return ARROW_LEFT
 			}
 		}
 
