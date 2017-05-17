@@ -162,9 +162,10 @@ func editorRefreshScreen() {
 }
 
 func editorDrawRows() {
-	for y := 0; y < E.screenRows; y++ {
+	for y := 0; y < E.screenRows - 1; y++ {
 		io.WriteString(os.Stdout, "~\r\n")
 	}
+	io.WriteString(os.Stdout, "~")
 }
 
 /*** init ***/
