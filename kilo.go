@@ -26,6 +26,8 @@ type Termios struct {
 }
 
 type editorConfig struct {
+	cx          int
+	cy          int
 	screenRows  int
 	screenCols  int
 	origTermios *Termios
@@ -190,9 +192,7 @@ func editorDrawRows(ab *abuf) {
 				w = w[0:E.screenCols]
 			}
 			pad := "~ "
-			for padding := (E.screenCols - len(w))/2;
-				padding > 0;
-				padding-- {
+			for padding := (E.screenCols - len(w)) / 2; padding > 0; padding-- {
 				ab.abAppend(pad)
 				pad = " "
 			}
@@ -201,7 +201,7 @@ func editorDrawRows(ab *abuf) {
 			ab.abAppend("~")
 		}
 		ab.abAppend("\x1b[K")
-		if y < E.screenRows - 1 {
+		if y < E.screenRows-1 {
 			ab.abAppend("\r\n")
 		}
 	}
