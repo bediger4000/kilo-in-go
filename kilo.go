@@ -178,13 +178,13 @@ func getWindowSize(rows *int, cols *int) int {
 func editorMoveCursor(key int) {
 	switch key {
 	case ARROW_LEFT:
-		E.cx--
+		if E.cx != 0 { E.cx-- }
 	case ARROW_RIGHT:
-		E.cx++
+		if E.cx != E.screenCols - 1 { E.cx++ }
 	case ARROW_UP:
-		E.cy--
+		if E.cy != 0 { E.cy-- }
 	case ARROW_DOWN:
-		E.cy++
+		if E.cy != E.screenRows - 1 { E.cy++ }
 	}
 }
 
