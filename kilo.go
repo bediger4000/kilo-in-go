@@ -170,10 +170,12 @@ func (p *abuf) abAppend(s string) {
 
 func editorRefreshScreen() {
 	var ab abuf
+	ab.abAppend("\x1b[25l")
 	ab.abAppend("\x1b[2J")
 	ab.abAppend("\x1b[H")
 	editorDrawRows(&ab)
 	ab.abAppend("\x1b[H")
+	ab.abAppend("\x1b[25h")
 	io.WriteString(os.Stdout, ab.String())
 }
 
