@@ -185,7 +185,18 @@ func editorRefreshScreen() {
 func editorDrawRows(ab *abuf) {
 	for y := 0; y < E.screenRows-1; y++ {
 		if y == E.screenRows/3 {
-			ab.abAppend(fmt.Sprintf("Kilo editor -- version %s", KILO_VERSION))
+			w := fmt.Sprintf("Kilo editor -- version %s", KILO_VERSION)
+			if len(w) > E.screenCols {
+				w = w[0:E.screenCols]
+			}
+			pad := "~ "
+			for padding := (E.screenCols - len(w))/2;
+				padding > 0;
+				padding-- {
+				ab.abAppend(pad)
+				pad = " "
+			}
+			ab.abAppend(w)
 		} else {
 			ab.abAppend("~")
 		}
