@@ -13,10 +13,10 @@ import (
 
 const KILO_VERSION = "0.0.1"
 const (
-	ARROW_LEFT  = 'a'
-	ARROW_RIGHT = 'd'
-	ARROW_UP    = 'w'
-	ARROW_DOWN  = 's'
+	ARROW_LEFT  = 1000 + iota
+	ARROW_RIGHT = 1000 + iota
+	ARROW_UP    = 1000 + iota
+	ARROW_DOWN  = 1000 + iota
 )
 
 /*** data ***/
@@ -94,7 +94,7 @@ func disableRawMode() {
 	}
 }
 
-func editorReadKey() byte {
+func editorReadKey() int {
 	var buffer [1]byte
 	var cc int
 	var err error
@@ -125,7 +125,7 @@ func editorReadKey() byte {
 
 		return '\x1b'
 	}
-	return buffer[0]
+	return int(buffer[0])
 }
 
 func getCursorPosition(rows *int, cols *int) int {
@@ -175,7 +175,7 @@ func getWindowSize(rows *int, cols *int) int {
 
 /*** input ***/
 
-func editorMoveCursor(key byte) {
+func editorMoveCursor(key int) {
 	switch key {
 	case ARROW_LEFT:
 		E.cx--
