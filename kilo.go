@@ -241,6 +241,10 @@ func editorProcessKeypress() {
 		io.WriteString(os.Stdout, "\x1b[H")
 		disableRawMode()
 		os.Exit(0)
+	case HOME_KEY:
+		E.cx = 0
+	case END_KEY:
+		E.cx = E.screenCols - 1
 	case PAGE_UP, PAGE_DOWN:
 		dir := ARROW_DOWN
 		if c == PAGE_UP {
