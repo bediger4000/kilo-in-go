@@ -17,6 +17,7 @@ const (
 	ARROW_RIGHT = 1000 + iota
 	ARROW_UP    = 1000 + iota
 	ARROW_DOWN  = 1000 + iota
+	DEL_KEY     = 1000 + iota
 	HOME_KEY    = 1000 + iota
 	END_KEY     = 1000 + iota
 	PAGE_UP     = 1000 + iota
@@ -122,6 +123,8 @@ func editorReadKey() int {
 					switch seq[1] {
 					case '1':
 						return HOME_KEY
+					case '3':
+						return DEL_KEY
 					case '4':
 						return END_KEY
 					case '5':
