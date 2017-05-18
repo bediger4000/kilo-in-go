@@ -46,7 +46,7 @@ type editorConfig struct {
 	screenRows  int
 	screenCols  int
 	numRows     int
-	row         erow
+	rows        erow
 	origTermios *Termios
 }
 
@@ -224,7 +224,7 @@ func getWindowSize(rows *int, cols *int) int {
 func editorOpen() {
 	var line = "Hello, World!"
 
-	E.row.chars = []byte(line)
+	E.rows.chars = []byte(line)
 	E.numRows = 1
 }
 
@@ -290,6 +290,10 @@ func (p *abuf) abAppend(s string) {
 	p.buf = append(p.buf, []byte(s)...)
 }
 
+func (p *abuf) abAppendBytes(b []byte) {
+	p.buf = append(p.buf, b...)
+}
+
 /*** output ***/
 
 func editorRefreshScreen() {
@@ -304,19 +308,25 @@ func editorRefreshScreen() {
 
 func editorDrawRows(ab *abuf) {
 	for y := 0; y < E.screenRows-1; y++ {
-		if y == E.screenRows/3 {
-			w := fmt.Sprintf("Kilo editor -- version %s", KILO_VERSION)
-			if len(w) > E.screenCols {
-				w = w[0:E.screenCols]
+		if y >= E.numRows {
+			if y == E.screenRows/3 {
+				w := fmt.Sprintf("Kilo editor -- version %s", KILO_VERSION)
+				if len(w) > E.screenCols {
+					w = w[0:E.screenCols]
+				}
+				pad := "~ "
+				for padding := (E.screenCols - len(w)) / 2; padding > 0; padding-- {
+					ab.abAppend(pad)
+					pad = " "
+				}
+				ab.abAppend(w)
+			} else {
+				ab.abAppend("~")
 			}
-			pad := "~ "
-			for padding := (E.screenCols - len(w)) / 2; padding > 0; padding-- {
-				ab.abAppend(pad)
-				pad = " "
-			}
-			ab.abAppend(w)
 		} else {
-			ab.abAppend("~")
+			length := len(E.rows.chars)
+			if length > E.screenCols { length = E.screenCols }
+			ab.abAppendBytes(E.rows.chars[:length])
 		}
 		ab.abAppend("\x1b[K")
 		if y < E.screenRows-1 {
