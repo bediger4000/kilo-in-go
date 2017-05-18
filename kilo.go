@@ -17,6 +17,8 @@ const (
 	ARROW_RIGHT = 1000 + iota
 	ARROW_UP    = 1000 + iota
 	ARROW_DOWN  = 1000 + iota
+	HOME_KEY    = 1000 + iota
+	END_KEY     = 1000 + iota
 	PAGE_UP     = 1000 + iota
 	PAGE_DOWN   = 1000 + iota
 )
@@ -118,10 +120,18 @@ func editorReadKey() int {
 				}
 				if buffer[0] == '~' {
 					switch seq[1] {
+					case '1':
+						return HOME_KEY
+					case '4':
+						return END_KEY
 					case '5':
 						return PAGE_UP
 					case '6':
 						return PAGE_DOWN
+					case '7':
+						return HOME_KEY
+					case '8':
+						return END_KEY
 					}
 				}
 				// XXX - what happens here?
@@ -135,7 +145,18 @@ func editorReadKey() int {
 					return ARROW_RIGHT
 				case 'D':
 					return ARROW_LEFT
+				case 'H':
+					return HOME_KEY
+				case 'F':
+					return END_KEY
 				}
+			}
+		} else if seq[0] == '0' {
+			switch seq[1] {
+			case 'H':
+				return HOME_KEY
+			case 'F':
+				return END_KEY
 			}
 		}
 
