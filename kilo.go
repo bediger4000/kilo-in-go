@@ -220,6 +220,13 @@ func getWindowSize(rows *int, cols *int) int {
 	return -1
 }
 
+/*** row operations ***/
+
+func editorAppendRow(s []byte) {
+	E.rows.chars = s
+	E.numRows = 1
+}
+
 /*** file I/O ***/
 
 func editorOpen(filename string) {
@@ -234,8 +241,11 @@ func editorOpen(filename string) {
 	if err != nil {
 		die(err)
 	}
-	E.rows.chars = line[:len(line)-1]
-	E.numRows = 1
+
+	for c := line[len(line) - 1]; len(line) > 0 && (c == '\n' || c == '\r'); line = line[:len(line)-1] {
+	}
+
+	editorAppendRow(line)
 }
 
 /*** input ***/
