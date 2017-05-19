@@ -319,7 +319,7 @@ func editorRefreshScreen() {
 func editorDrawRows(ab *abuf) {
 	for y := 0; y < E.screenRows-1; y++ {
 		if y >= E.numRows {
-			if y == E.screenRows/3 {
+			if E.numRows == 0 && y == E.screenRows/3 {
 				w := fmt.Sprintf("Kilo editor -- version %s", KILO_VERSION)
 				if len(w) > E.screenCols {
 					w = w[0:E.screenCols]
