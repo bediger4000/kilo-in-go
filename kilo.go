@@ -47,7 +47,7 @@ type editorConfig struct {
 	screenRows  int
 	screenCols  int
 	numRows     int
-	rows        erow
+	rows        *erow
 	origTermios *Termios
 }
 
@@ -348,6 +348,7 @@ func editorDrawRows(ab *abuf) {
 /*** init ***/
 
 func initEditor() {
+	// Initialization a la C not necessary.
 	if getWindowSize(&E.screenRows, &E.screenCols) == -1 {
 		die(fmt.Errorf("couldn't get screen size"))
 	}
