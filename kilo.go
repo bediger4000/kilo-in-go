@@ -47,7 +47,7 @@ type editorConfig struct {
 	screenRows  int
 	screenCols  int
 	numRows     int
-	rows        *erow
+	rows        []erow
 	origTermios *Termios
 }
 
@@ -223,8 +223,10 @@ func getWindowSize(rows *int, cols *int) int {
 /*** row operations ***/
 
 func editorAppendRow(s []byte) {
-	E.rows.chars = s
-	E.numRows = 1
+	var r erow
+	r.chars = s
+	E.rows = append(E.rows, r)
+	E.numRows++
 }
 
 /*** file I/O ***/
