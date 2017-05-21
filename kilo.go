@@ -339,7 +339,8 @@ func editorRefreshScreen() {
 
 func editorDrawRows(ab *abuf) {
 	for y := 0; y < E.screenRows; y++ {
-		if y >= E.numRows {
+		filerow := y + E.rowoff
+		if filerow >= E.numRows {
 			if E.numRows == 0 && y == E.screenRows/3 {
 				w := fmt.Sprintf("Kilo editor -- version %s", KILO_VERSION)
 				if len(w) > E.screenCols {
@@ -357,7 +358,7 @@ func editorDrawRows(ab *abuf) {
 		} else {
 			length := len(E.rows[y].chars)
 			if length > E.screenCols { length = E.screenCols }
-			ab.abAppendBytes(E.rows[y].chars[:length])
+			ab.abAppendBytes(E.rows[filerow].chars[:length])
 		}
 		ab.abAppend("\x1b[K")
 		if y < E.screenRows-1 {
