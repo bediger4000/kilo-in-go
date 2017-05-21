@@ -273,7 +273,7 @@ func editorMoveCursor(key int) {
 			E.cy--
 		}
 	case ARROW_DOWN:
-		if E.cy != E.screenRows-1 {
+		if E.cy < E.numRows {
 			E.cy++
 		}
 	}
@@ -324,7 +324,17 @@ func (p *abuf) abAppendBytes(b []byte) {
 
 /*** output ***/
 
+func editorScroll() {
+	if E.cy < E.rowoff {
+		E.rowoff = E.cy
+	}
+	if E.cy >= E.rowoff + E.screenRows {
+		E.rowoff = E.cy - E.screenRows + 1
+	}
+}
+
 func editorRefreshScreen() {
+	editorScroll()
 	var ab abuf
 	ab.abAppend("\x1b[25l")
 	ab.abAppend("\x1b[H")
@@ -356,7 +366,7 @@ func editorDrawRows(ab *abuf) {
 				ab.abAppend("~")
 			}
 		} else {
-			length := len(E.rows[y].chars)
+			length := len(E.rows[filerow].chars)
 			if length > E.screenCols { length = E.screenCols }
 			ab.abAppendBytes(E.rows[filerow].chars[:length])
 		}
