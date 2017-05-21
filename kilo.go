@@ -367,9 +367,10 @@ func editorDrawRows(ab *abuf) {
 				ab.abAppend("~")
 			}
 		} else {
-			length := len(E.rows[filerow].chars)
+			length := len(E.rows[filerow].chars) - E.coloff
+			if length < 0 { length = 0 }
 			if length > E.screenCols { length = E.screenCols }
-			ab.abAppendBytes(E.rows[filerow].chars[:length])
+			ab.abAppendBytes(E.rows[filerow].chars[E.coloff:length])
 		}
 		ab.abAppend("\x1b[K")
 		if y < E.screenRows-1 {
