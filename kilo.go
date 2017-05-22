@@ -39,6 +39,7 @@ type Termios struct {
 
 type erow struct {
 	chars []byte
+	size  int
 }
 
 type editorConfig struct {
@@ -224,11 +225,13 @@ func getWindowSize(rows *int, cols *int) int {
 
 /*** row operations ***/
 
-func editorAppendRow(s []byte) {
+func editorAppendRow(s []byte, f io.Writer) {
 	var r erow
 	r.chars = s
+	r.size = len(s)
 	E.rows = append(E.rows, r)
 	E.numRows++
+fmt.Fprintf(f, "Added row %d, length %d\n", E.numRows, r.size)
 }
 
 /*** file I/O ***/
@@ -240,6 +243,8 @@ func editorOpen(filename string) {
 	}
 	defer fd.Close()
 	fp := bufio.NewReader(fd)
+x , _:= os.OpenFile("/dev/pts/4", os.O_RDWR, 0666)
+defer x.Close()
 
 	for line, err := fp.ReadBytes('\n'); err == nil; line, err = fp.ReadBytes('\n') { 
 		// Trim trailing newlines and carriage returns
@@ -249,8 +254,11 @@ func editorOpen(filename string) {
 				c = line[len(line) - 1]
 			}
 		}
-		editorAppendRow(line)
+		editorAppendRow(line, x)
 	}
+fmt.Fprintf(x, "%d rows in bufer\n", E.numRows)
+fmt.Fprintf(x, "Screen %d x %d\n", E.screenCols, E.screenRows)
+fmt.Fprintf(x, "Col offset %d, row offset %d\n", E.coloff, E.rowoff)
 
 	if err != nil && err != io.EOF {
 		die(err)
@@ -344,7 +352,7 @@ func editorRefreshScreen() {
 	ab.abAppend("\x1b[25l")
 	ab.abAppend("\x1b[H")
 	editorDrawRows(&ab)
-	ab.abAppend(fmt.Sprintf("\x1b[%d;%dH", (E.cy - E.rowoff) + 1, E.cx+1))
+	ab.abAppend(fmt.Sprintf("\x1b[%d;%dH", (E.cy - E.rowoff) + 1, (E.cx - E.coloff) + 1))
 	ab.abAppend("\x1b[25h")
 	_, e := io.WriteString(os.Stdout, ab.String())
 	if e != nil {
@@ -371,10 +379,10 @@ func editorDrawRows(ab *abuf) {
 				ab.abAppend("~")
 			}
 		} else {
-			length := len(E.rows[filerow].chars) - E.coloff
-			if length < 0 { length = 0 }
-			if length > E.screenCols { length = E.screenCols }
-			ab.abAppendBytes(E.rows[filerow].chars[E.coloff:length])
+			len := E.rows[filerow].size - E.coloff
+			if len < 0 { len = 0 }
+			if len > E.screenCols { len = E.screenCols }
+			ab.abAppendBytes(E.rows[filerow].chars[E.coloff:E.coloff+len])
 		}
 		ab.abAppend("\x1b[K")
 		if y < E.screenRows-1 {
