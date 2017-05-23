@@ -227,11 +227,17 @@ func getWindowSize(rows *int, cols *int) int {
 
 /*** row operations ***/
 
+func editorUpdateRow(row *erow) {
+	copy(row.render, row.chars)
+	row.rsize = len(row.render)
+}
+
 func editorAppendRow(s []byte) {
 	var r erow
 	r.chars = s
 	r.size = len(s)
 	E.rows = append(E.rows, r)
+	editorUpdateRow(&E.rows[E.numRows])
 	E.numRows++
 }
 
