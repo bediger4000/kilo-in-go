@@ -13,6 +13,7 @@ import (
 /*** defines ***/
 
 const KILO_VERSION = "0.0.1"
+const KILO_TAB_STOP = 8
 const (
 	ARROW_LEFT  = 1000 + iota
 	ARROW_RIGHT = 1000 + iota
@@ -234,14 +235,14 @@ func editorUpdateRow(row *erow) {
 			tabs++
 		}
 	}
-	row.render = make([]byte, row.size + tabs*7)
+	row.render = make([]byte, row.size + tabs*(KILO_TAB_STOP - 1))
 
 	idx := 0
 	for _, c := range row.chars {
 		if c == '\t' {
 			row.render[idx] = ' '
 			idx++
-			for (idx%8) != 0 {
+			for (idx%KILO_TAB_STOP) != 0 {
 				row.render[idx] = ' '
 				idx++
 			}
