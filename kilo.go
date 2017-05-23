@@ -229,6 +229,17 @@ func getWindowSize(rows *int, cols *int) int {
 
 /*** row operations ***/
 
+func editorRowCxToRx(row *erow, cx int) int {
+	rx := 0
+	for j := 0; j < cx; j++ {
+		if row.chars[j] == '\t' {
+			rx += (KILO_TAB_STOP - 1) - (rx % KILO_TAB_STOP)
+		}
+		rx++
+	}
+	return rx
+}
+
 func editorUpdateRow(row *erow) {
 	tabs := 0
 	for _, c := range row.chars {
