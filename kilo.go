@@ -375,17 +375,19 @@ func (p *abuf) abAppendBytes(b []byte) {
 /*** output ***/
 
 func editorScroll() {
+	E.rx = E.cx
+
 	if E.cy < E.rowoff {
 		E.rowoff = E.cy
 	}
 	if E.cy >= E.rowoff + E.screenRows {
 		E.rowoff = E.cy - E.screenRows + 1
 	}
-	if E.cx < E.coloff {
-		E.coloff = E.cx
+	if E.rx < E.coloff {
+		E.coloff = E.rx
 	}
-	if E.cx >= E.coloff + E.screenCols {
-		E.coloff = E.cx - E.screenCols + 1
+	if E.rx >= E.coloff + E.screenCols {
+		E.coloff = E.rx - E.screenCols + 1
 	}
 }
 
