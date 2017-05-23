@@ -271,8 +271,13 @@ func editorMoveCursor(key int) {
 			E.cx = E.rows[E.cy].size
 		}
 	case ARROW_RIGHT:
-		if E.cy < E.numRows && E.cx < E.rows[E.cy].size {
-			E.cx++
+		if E.cy < E.numRows {
+			if E.cx < E.rows[E.cy].size {
+				E.cx++
+			} else if E.cx == E.rows[E.cy].size {
+				E.cy++
+				E.cx = 0
+			}
 		}
 	case ARROW_UP:
 		if E.cy != 0 {
