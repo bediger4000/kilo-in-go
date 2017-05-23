@@ -397,7 +397,7 @@ func editorRefreshScreen() {
 	ab.abAppend("\x1b[25l")
 	ab.abAppend("\x1b[H")
 	editorDrawRows(&ab)
-	ab.abAppend(fmt.Sprintf("\x1b[%d;%dH", (E.cy - E.rowoff) + 1, (E.cx - E.coloff) + 1))
+	ab.abAppend(fmt.Sprintf("\x1b[%d;%dH", (E.cy - E.rowoff) + 1, (E.rx - E.coloff) + 1))
 	ab.abAppend("\x1b[25h")
 	_, e := io.WriteString(os.Stdout, ab.String())
 	if e != nil {
