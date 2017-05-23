@@ -48,6 +48,7 @@ type erow struct {
 type editorConfig struct {
 	cx          int
 	cy          int
+	rx          int
 	rowoff      int
 	coloff      int
 	screenRows  int
