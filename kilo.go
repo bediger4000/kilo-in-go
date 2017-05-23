@@ -38,8 +38,10 @@ type Termios struct {
 }
 
 type erow struct {
-	chars []byte
-	size  int
+	size   int
+	rsize  int
+	chars  []byte
+	render []byte
 }
 
 type editorConfig struct {
