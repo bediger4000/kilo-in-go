@@ -225,13 +225,12 @@ func getWindowSize(rows *int, cols *int) int {
 
 /*** row operations ***/
 
-func editorAppendRow(s []byte, f io.Writer) {
+func editorAppendRow(s []byte) {
 	var r erow
 	r.chars = s
 	r.size = len(s)
 	E.rows = append(E.rows, r)
 	E.numRows++
-fmt.Fprintf(f, "Added row %d, length %d\n", E.numRows, r.size)
 }
 
 /*** file I/O ***/
@@ -243,8 +242,6 @@ func editorOpen(filename string) {
 	}
 	defer fd.Close()
 	fp := bufio.NewReader(fd)
-x , _:= os.OpenFile("/dev/pts/4", os.O_RDWR, 0666)
-defer x.Close()
 
 	for line, err := fp.ReadBytes('\n'); err == nil; line, err = fp.ReadBytes('\n') { 
 		// Trim trailing newlines and carriage returns
@@ -254,11 +251,8 @@ defer x.Close()
 				c = line[len(line) - 1]
 			}
 		}
-		editorAppendRow(line, x)
+		editorAppendRow(line)
 	}
-fmt.Fprintf(x, "%d rows in bufer\n", E.numRows)
-fmt.Fprintf(x, "Screen %d x %d\n", E.screenCols, E.screenRows)
-fmt.Fprintf(x, "Col offset %d, row offset %d\n", E.coloff, E.rowoff)
 
 	if err != nil && err != io.EOF {
 		die(err)
@@ -274,7 +268,9 @@ func editorMoveCursor(key int) {
 			E.cx--
 		}
 	case ARROW_RIGHT:
-		E.cx++
+		if E.numRows > 0 && E.cx < E.rows[E.cy].size {
+			E.cx++
+		}
 	case ARROW_UP:
 		if E.cy != 0 {
 			E.cy--
