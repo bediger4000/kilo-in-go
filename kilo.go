@@ -228,9 +228,29 @@ func getWindowSize(rows *int, cols *int) int {
 /*** row operations ***/
 
 func editorUpdateRow(row *erow) {
-	row.render = make([]byte, row.size)
-	copy(row.render, row.chars)
-	row.rsize = len(row.render)
+	tabs := 0
+	for _, c := range row.chars {
+		if c == '\t' {
+			tabs++
+		}
+	}
+	row.render = make([]byte, row.size + tabs*7)
+
+	idx := 0
+	for _, c := range row.chars {
+		if c == '\t' {
+			row.render[idx] = ' '
+			idx++
+			for (idx%8) != 0 {
+				row.render[idx] = ' '
+				idx++
+			}
+		} else {
+			row.render[idx] = c
+			idx++
+		}
+	}
+	row.rsize = idx
 }
 
 func editorAppendRow(s []byte) {
