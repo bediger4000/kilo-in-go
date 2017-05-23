@@ -228,6 +228,7 @@ func getWindowSize(rows *int, cols *int) int {
 /*** row operations ***/
 
 func editorUpdateRow(row *erow) {
+	row.render = make([]byte, row.size)
 	copy(row.render, row.chars)
 	row.rsize = len(row.render)
 }
@@ -399,10 +400,10 @@ func editorDrawRows(ab *abuf) {
 				ab.abAppend("~")
 			}
 		} else {
-			len := E.rows[filerow].size - E.coloff
+			len := E.rows[filerow].rsize - E.coloff
 			if len < 0 { len = 0 }
 			if len > E.screenCols { len = E.screenCols }
-			ab.abAppendBytes(E.rows[filerow].chars[E.coloff:E.coloff+len])
+			ab.abAppendBytes(E.rows[filerow].render[E.coloff:E.coloff+len])
 		}
 		ab.abAppend("\x1b[K")
 		if y < E.screenRows-1 {
