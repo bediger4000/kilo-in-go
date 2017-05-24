@@ -355,7 +355,11 @@ func editorProcessKeypress() {
 	case PAGE_UP, PAGE_DOWN:
 		dir := ARROW_DOWN
 		if c == PAGE_UP {
+			E.cy = E.rowoff
 			dir = ARROW_UP
+		} else {
+			E.cy = E.rowoff + E.screenRows - 1
+			if E.cy > E.numRows { E.cy = E.numRows }
 		}
 		for times := E.screenRows; times > 0; times-- {
 			editorMoveCursor(dir)
