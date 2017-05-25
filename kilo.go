@@ -464,7 +464,13 @@ func editorDrawRows(ab *abuf) {
 
 func editorDrawStatusBar(ab *abuf) {
 	ab.abAppend("\x1b[7m")
-	for i := 0; i < E.screenCols; i++ {
+	fname := E.filename
+	if len(fname) == 0 {
+		fname = "[No Name]"
+	}
+	announce := fmt.Sprintf("%.20s - %d lines", fname, E.numRows)
+	ab.abAppend(announce)
+	for i := len(announce); i < E.screenCols; i++ {
 		ab.abAppend(" ")
 	}
 	ab.abAppend("\x1b[m")
