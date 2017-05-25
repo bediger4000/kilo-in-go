@@ -468,10 +468,20 @@ func editorDrawStatusBar(ab *abuf) {
 	if len(fname) == 0 {
 		fname = "[No Name]"
 	}
-	announce := fmt.Sprintf("%.20s - %d lines", fname, E.numRows)
-	ab.abAppend(announce)
-	for i := len(announce); i < E.screenCols; i++ {
-		ab.abAppend(" ")
+	status := fmt.Sprintf("%.20s - %d lines", fname, E.numRows)
+	ln := len(status)
+	if ln > E.screenCols { ln = E.screenCols }
+	rstatus := fmt.Sprintf("%d/%d", E.cy+1, E.numRows)
+	rlen := len(rstatus)
+	ab.abAppend(status[:ln])
+	for ln < E.screenCols {
+		if E.screenCols - ln == rlen {
+			ab.abAppend(rstatus)
+			break
+		} else {
+			ab.abAppend(" ")
+			ln++
+		}
 	}
 	ab.abAppend("\x1b[m")
 }
