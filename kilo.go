@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"syscall"
+	"time"
 	"unsafe"
 )
 
@@ -56,6 +57,8 @@ type editorConfig struct {
 	numRows     int
 	rows        []erow
 	filename    string
+	statusmsg   string
+	statusmsg_time time.Time
 	origTermios *Termios
 }
 
