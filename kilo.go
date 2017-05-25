@@ -489,6 +489,11 @@ func editorDrawStatusBar(ab *abuf) {
 	ab.abAppend("\x1b[m")
 }
 
+func editorSetStatusMessage(args...interface{}) {
+	E.statusmsg = fmt.Sprintf(args[0].(string), args[1:]...)
+	E.statusmsg_time = time.Now()
+}
+
 /*** init ***/
 
 func initEditor() {
@@ -506,6 +511,8 @@ func main() {
 	if len(os.Args) > 1 {
 		editorOpen(os.Args[1])
 	}
+
+	editorSetStatusMessage("HELP: Ctrl-Q = quit")
 
 	for {
 		editorRefreshScreen()
