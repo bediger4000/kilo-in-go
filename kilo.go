@@ -487,6 +487,7 @@ func editorDrawStatusBar(ab *abuf) {
 		}
 	}
 	ab.abAppend("\x1b[m")
+	ab.abAppend("\r\n")
 }
 
 func editorSetStatusMessage(args...interface{}) {
