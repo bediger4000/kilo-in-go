@@ -279,6 +279,25 @@ func editorAppendRow(s []byte) {
 	E.numRows++
 }
 
+func editorRowInsertChar(row *erow, at int, c byte) {
+	if at < 0 || at > row.size {
+		row.chars = append(row.chars, c)
+	} else if at == 0 {
+		t := make([]byte, 1)
+		t[0] = c
+		row.chars = append(t, row.chars...)
+	} else {
+		t := row.chars[at-1:]
+		row.chars = row.chars[:at]
+		t[0] = c
+		row.chars = append(row.chars, t...)
+	}
+	row.size = len(row.chars)
+	editorUpdateRow(row)
+}
+
+/*** editor operations ***/
+
 /*** file I/O ***/
 
 func editorOpen(filename string) {
