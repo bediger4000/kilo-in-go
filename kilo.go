@@ -287,10 +287,11 @@ func editorRowInsertChar(row *erow, at int, c byte) {
 		t[0] = c
 		row.chars = append(t, row.chars...)
 	} else {
-		t := row.chars[at-1:]
-		row.chars = row.chars[:at]
-		t[0] = c
-		row.chars = append(row.chars, t...)
+		t := make([]byte, row.size+1)
+		copy(t, row.chars[:at])
+		t[at] = c
+		copy(t[at+1:], row.chars[at:])
+		row.chars = t
 	}
 	row.size = len(row.chars)
 	editorUpdateRow(row)
