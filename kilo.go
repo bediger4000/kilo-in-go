@@ -502,7 +502,7 @@ func initEditor() {
 	if getWindowSize(&E.screenRows, &E.screenCols) == -1 {
 		die(fmt.Errorf("couldn't get screen size"))
 	}
-	E.screenRows--
+	E.screenRows -= 2
 }
 
 func main() {
