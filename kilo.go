@@ -302,6 +302,14 @@ func editorRowInsertChar(row *erow, at int, c byte) {
 	E.dirty = true
 }
 
+func editorRowDelChar(row *erow, at int) {
+	if at < 0 || at > row.size { return }
+	copy(row.chars[at:], row.chars[at+1:])
+	row.size--
+	E.dirty = true
+	editorUpdateRow(row)
+}
+
 /*** editor operations ***/
 
 func editorInsertChar(c byte) {
@@ -311,6 +319,14 @@ func editorInsertChar(c byte) {
 	}
 	editorRowInsertChar(&E.rows[E.cy], E.cx, c)
 	E.cx++
+}
+
+func editorDelChar() {
+	if E.cy == E.numRows { return }
+	if E.cx > 0 {
+		editorRowDelChar(&E.rows[E.cy], E.cx - 1)
+		E.cx--
+	}
 }
 
 /*** file I/O ***/
