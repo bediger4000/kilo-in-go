@@ -15,6 +15,7 @@ import (
 
 const KILO_VERSION = "0.0.1"
 const KILO_TAB_STOP = 8
+const KILO_QUIT_TIMES = 3
 const (
 	BACKSPACE   = 127
 	ARROW_LEFT  = 1000 + iota
@@ -413,12 +414,19 @@ func editorMoveCursor(key int) {
 	}
 }
 
+var quitTimes int = KILO_QUIT_TIMES
+
 func editorProcessKeypress() {
 	c := editorReadKey()
 	switch c {
 	case '\r':
 		break
 	case ('q' & 0x1f):
+		if E.dirty && quitTimes > 0 {
+			editorSetStatusMessage("Warning!!! File has unsaved changes. Press Ctrl-Q %d more times to quit.", quitTimes)
+			quitTimes--
+			return
+		}
 		io.WriteString(os.Stdout, "\x1b[2J")
 		io.WriteString(os.Stdout, "\x1b[H")
 		disableRawMode()
@@ -454,6 +462,7 @@ func editorProcessKeypress() {
 	default:
 		editorInsertChar(byte(c))
 	}
+	quitTimes = KILO_QUIT_TIMES
 }
 
 /*** append buffer ***/
