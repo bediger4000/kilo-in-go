@@ -353,16 +353,20 @@ func editorSave() {
 	buf, len := editorRowsToString()
 	fp,e := os.OpenFile(E.filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if e != nil {
-		die(e)
+		editorSetStatusMessage("Can't save! file open error %s", e)
+		return
 	}
 	defer fp.Close()
 	n, err := io.WriteString(fp, buf)
-	if err != nil {
-		die(err)
+	if err == nil {
+		if n == len {
+			editorSetStatusMessage("%d bytes written to disk", len)
+		} else {
+			editorSetStatusMessage(fmt.Sprintf("wanted to write %d bytes to file, wrote %d", len, n))
+		}
+		return
 	}
-	if n != len {
-		die(fmt.Errorf("wanted to write %d bytes to file, wrote %d", len, n))
-	}
+	editorSetStatusMessage("Can't save! I/O error %s", err)
 }
 
 /*** input ***/
@@ -594,7 +598,7 @@ func main() {
 		editorOpen(os.Args[1])
 	}
 
-	editorSetStatusMessage("HELP: Ctrl-Q = quit")
+	editorSetStatusMessage("HELP: Ctrl-S = save | Ctrl-Q = quit")
 
 	for {
 		editorRefreshScreen()
