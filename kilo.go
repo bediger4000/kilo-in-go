@@ -16,6 +16,7 @@ import (
 const KILO_VERSION = "0.0.1"
 const KILO_TAB_STOP = 8
 const (
+	BACKSPACE   = 127
 	ARROW_LEFT  = 1000 + iota
 	ARROW_RIGHT = 1000 + iota
 	ARROW_UP    = 1000 + iota
@@ -377,6 +378,8 @@ func editorMoveCursor(key int) {
 func editorProcessKeypress() {
 	c := editorReadKey()
 	switch c {
+	case '\r':
+		break
 	case ('q' & 0x1f):
 		io.WriteString(os.Stdout, "\x1b[2J")
 		io.WriteString(os.Stdout, "\x1b[H")
@@ -388,6 +391,8 @@ func editorProcessKeypress() {
 		if E.cy < E.numRows {
 			E.cx = E.rows[E.cy].size
 		}
+	case ('h' & 0x1f), BACKSPACE, DEL_KEY:
+		break
 	case PAGE_UP, PAGE_DOWN:
 		dir := ARROW_DOWN
 		if c == PAGE_UP {
@@ -402,6 +407,10 @@ func editorProcessKeypress() {
 		}
 	case ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT:
 		editorMoveCursor(c)
+	case ('l' & 0x1f):
+		break
+	case '\x1b':
+		break
 	default:
 		editorInsertChar(byte(c))
 	}
