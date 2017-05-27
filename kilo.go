@@ -315,7 +315,7 @@ func editorRowsToString() (string, int) {
 	totlen := 0
 	buf := ""
 	for _, row := range E.rows {
-		totlen += row.size
+		totlen += row.size + 1
 		buf += string(row.chars) + "\n"
 	}
 	return buf, totlen
@@ -414,6 +414,8 @@ func editorProcessKeypress() {
 		io.WriteString(os.Stdout, "\x1b[H")
 		disableRawMode()
 		os.Exit(0)
+	case ('s' & 0x1f):
+		editorSave()
 	case HOME_KEY:
 		E.cx = 0
 	case END_KEY:
