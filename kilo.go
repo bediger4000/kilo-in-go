@@ -346,6 +346,25 @@ func editorOpen(filename string) {
 	}
 }
 
+func editorSave() {
+	if E.filename == "" {
+		return
+	}
+	buf, len := editorRowsToString()
+	fp,e := os.OpenFile(E.filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	if e != nil {
+		die(e)
+	}
+	defer fp.Close()
+	n, err := io.WriteString(fp, buf)
+	if err != nil {
+		die(err)
+	}
+	if n != len {
+		die(fmt.Errorf("wanted to write %d bytes to file, wrote %d", len, n))
+	}
+}
+
 /*** input ***/
 
 func editorMoveCursor(key int) {
