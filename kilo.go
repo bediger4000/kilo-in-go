@@ -347,6 +347,7 @@ func editorOpen(filename string) {
 	if err != nil && err != io.EOF {
 		die(err)
 	}
+	E.dirty = false
 }
 
 func editorSave() {
@@ -363,6 +364,7 @@ func editorSave() {
 	n, err := io.WriteString(fp, buf)
 	if err == nil {
 		if n == len {
+			E.dirty = false
 			editorSetStatusMessage("%d bytes written to disk", len)
 		} else {
 			editorSetStatusMessage(fmt.Sprintf("wanted to write %d bytes to file, wrote %d", len, n))
