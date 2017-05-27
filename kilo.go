@@ -57,6 +57,7 @@ type editorConfig struct {
 	screenCols  int
 	numRows     int
 	rows        []erow
+	dirty       bool
 	filename    string
 	statusmsg   string
 	statusmsg_time time.Time
