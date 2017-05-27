@@ -311,6 +311,16 @@ func editorInsertChar(c byte) {
 
 /*** file I/O ***/
 
+func editorRowsToString() (string, int) {
+	totlen := 0
+	buf := ""
+	for _, row := range E.rows {
+		totlen += row.size
+		buf += string(row.chars) + "\n"
+	}
+	return buf, totlen
+}
+
 func editorOpen(filename string) {
 	E.filename = filename
 	fd, err := os.Open(filename)
