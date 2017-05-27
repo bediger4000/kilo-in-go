@@ -548,7 +548,9 @@ func editorDrawStatusBar(ab *abuf) {
 	if len(fname) == 0 {
 		fname = "[No Name]"
 	}
-	status := fmt.Sprintf("%.20s - %d lines", fname, E.numRows)
+	modified := ""
+	if E.dirty { modified = "(modified)" }
+	status := fmt.Sprintf("%.20s - %d lines %s", fname, E.numRows, modified)
 	ln := len(status)
 	if ln > E.screenCols { ln = E.screenCols }
 	rstatus := fmt.Sprintf("%d/%d", E.cy+1, E.numRows)
