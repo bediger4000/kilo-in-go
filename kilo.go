@@ -310,6 +310,13 @@ func editorRowInsertChar(row *erow, at int, c byte) {
 	E.dirty = true
 }
 
+func editorRowAppendString(row *erow, s []byte) {
+	row.chars = append(row.chars, s...)
+	row.size = len(row.chars)
+	editorUpdateRow(row)
+	E.dirty = true
+}
+
 func editorRowDelChar(row *erow, at int) {
 	if at < 0 || at > row.size { return }
 	row.chars = append(row.chars[:at], row.chars[at+1:]...)
