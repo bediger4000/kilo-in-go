@@ -274,11 +274,22 @@ func editorUpdateRow(row *erow) {
 	row.rsize = idx
 }
 
-func editorAppendRow(s []byte) {
+// func editorAppendRow(s []byte) {
+func editorInsertRow(at int, s []byte) {
+	if at < 0 || at > E.numRows { return }
 	var r erow
 	r.chars = s
 	r.size = len(s)
-	E.rows = append(E.rows, r)
+
+	if at == 0 {
+		t := make([]erow, 1)
+		t[0] = r	
+		E.rows = append(t, E.rows...)
+	} else if at == E.numRows {
+		E.rows = append(E.rows, r)
+	} else {
+	}
+
 	editorUpdateRow(&E.rows[E.numRows])
 	E.numRows++
 	E.dirty = true
@@ -330,7 +341,7 @@ func editorRowDelChar(row *erow, at int) {
 func editorInsertChar(c byte) {
 	if E.cy == E.numRows {
 		var emptyRow []byte
-		editorAppendRow(emptyRow)
+		editorInsertRow(E.numRows, emptyRow)
 	}
 	editorRowInsertChar(&E.rows[E.cy], E.cx, c)
 	E.cx++
@@ -379,7 +390,7 @@ func editorOpen(filename string) {
 				c = line[len(line) - 1]
 			}
 		}
-		editorAppendRow(line)
+		editorInsertRow(E.numRows, line)
 	}
 
 	if err != nil && err != io.EOF {
