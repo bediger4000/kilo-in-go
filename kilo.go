@@ -274,7 +274,6 @@ func editorUpdateRow(row *erow) {
 	row.rsize = idx
 }
 
-// func editorAppendRow(s []byte) {
 func editorInsertRow(at int, s []byte) {
 	if at < 0 || at > E.numRows { return }
 	var r erow
@@ -345,6 +344,18 @@ func editorInsertChar(c byte) {
 	}
 	editorRowInsertChar(&E.rows[E.cy], E.cx, c)
 	E.cx++
+}
+
+func editorInsertNewLine() {
+	if E.cx == 0 {
+		editorInsertRow(E.cy, make([]byte, 0))
+	} else {
+		editorInsertRow(E.cy+1, E.rows[E.cy].chars[E.cx:])
+		E.rows[E.cy].chars = E.rows[E.cy].chars[:E.cx]
+		E.rows[E.cy].size = len(E.rows[E.cy].chars)
+	}
+	E.cy++
+	E.cx = 0
 }
 
 func editorDelChar() {
