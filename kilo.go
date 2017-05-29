@@ -440,6 +440,28 @@ func editorSave() {
 
 /*** input ***/
 
+func editorPrompt(prompt string) []byte {
+	var buf []byte
+
+	for {
+		editorSetStatusMessage(prompt, buf)
+		editorRefreshScreen()
+
+		c := editorReadKey()
+
+		if c == '\r' {
+			if len(buf) != 0 {
+				editorSetStatusMessage("")
+				return buf
+			}
+		} else {
+			if c >= 0x20 && c < 128 {
+				buf = append(buf, byte(c))
+			}
+		}
+	}
+}
+
 func editorMoveCursor(key int) {
 	switch key {
 	case ARROW_LEFT:
