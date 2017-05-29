@@ -416,7 +416,7 @@ func editorOpen(filename string) {
 
 func editorSave() {
 	if E.filename == "" {
-		return
+		E.filename = editorPrompt("Save as: %q")
 	}
 	buf, len := editorRowsToString()
 	fp,e := os.OpenFile(E.filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
@@ -440,7 +440,7 @@ func editorSave() {
 
 /*** input ***/
 
-func editorPrompt(prompt string) []byte {
+func editorPrompt(prompt string) string {
 	var buf []byte
 
 	for {
@@ -452,7 +452,7 @@ func editorPrompt(prompt string) []byte {
 		if c == '\r' {
 			if len(buf) != 0 {
 				editorSetStatusMessage("")
-				return buf
+				return string(buf)
 			}
 		} else {
 			if c >= 0x20 && c < 128 {
