@@ -287,9 +287,12 @@ func editorInsertRow(at int, s []byte) {
 	} else if at == E.numRows {
 		E.rows = append(E.rows, r)
 	} else {
+		t := make([]erow, 1)
+		t[0] = r	
+		E.rows = append(E.rows[:at], append(t, E.rows[at:]...)...)
 	}
 
-	editorUpdateRow(&E.rows[E.numRows])
+	editorUpdateRow(&E.rows[at])
 	E.numRows++
 	E.dirty = true
 }
@@ -353,6 +356,7 @@ func editorInsertNewLine() {
 		editorInsertRow(E.cy+1, E.rows[E.cy].chars[E.cx:])
 		E.rows[E.cy].chars = E.rows[E.cy].chars[:E.cx]
 		E.rows[E.cy].size = len(E.rows[E.cy].chars)
+		editorUpdateRow(&E.rows[E.cy])
 	}
 	E.cy++
 	E.cx = 0
@@ -479,6 +483,7 @@ func editorProcessKeypress() {
 	c := editorReadKey()
 	switch c {
 	case '\r':
+		editorInsertNewLine()
 		break
 	case ('q' & 0x1f):
 		if E.dirty && quitTimes > 0 {
