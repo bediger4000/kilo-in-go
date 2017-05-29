@@ -417,6 +417,10 @@ func editorOpen(filename string) {
 func editorSave() {
 	if E.filename == "" {
 		E.filename = editorPrompt("Save as: %q")
+		if E.filename == "" {
+			editorSetStatusMessage("Save aborted")
+			return
+		}
 	}
 	buf, len := editorRowsToString()
 	fp,e := os.OpenFile(E.filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
