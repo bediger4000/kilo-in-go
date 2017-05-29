@@ -449,7 +449,10 @@ func editorPrompt(prompt string) string {
 
 		c := editorReadKey()
 
-		if c == '\r' {
+		if c == '\x1b' {
+			editorSetStatusMessage("")
+			return ""
+		} else if c == '\r' {
 			if len(buf) != 0 {
 				editorSetStatusMessage("")
 				return string(buf)
