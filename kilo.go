@@ -453,7 +453,11 @@ func editorPrompt(prompt string) string {
 
 		c := editorReadKey()
 
-		if c == '\x1b' {
+		if c == DEL_KEY || c == ('h' & 0x1f) || c == BACKSPACE {
+			if (len(buf) > 0) {
+				buf = buf[:len(buf)-1]
+			}
+		} else if c == '\x1b' {
 			editorSetStatusMessage("")
 			return ""
 		} else if c == '\r' {
