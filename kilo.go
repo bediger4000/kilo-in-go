@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 	"syscall"
 	"time"
 	"unsafe"
@@ -247,6 +248,19 @@ func editorRowCxToRx(row *erow, cx int) int {
 	return rx
 }
 
+func editorRowRxtoCx(row *erow, rx int) int {
+	curRx := 0
+	var cx int
+	for cx := 0; cx < row.size; cx++ {
+		if row.chars[cx] == '\t' {
+			curRx += (KILO_TAB_STOP - 1) - (curRx % KILO_TAB_STOP)
+		}
+		curRx++
+		if curRx > rx { break }
+	}
+	return cx
+}
+
 func editorUpdateRow(row *erow) {
 	tabs := 0
 	for _, c := range row.chars {
@@ -440,6 +454,22 @@ func editorSave() {
 		return
 	}
 	editorSetStatusMessage("Can't save! I/O error %s", err)
+}
+
+/*** find ***/
+
+func editorFind() {
+	query := editorPrompt("Search: %s (ESC to cancel)")
+	if query == "" { return }
+	for i, row := range E.rows {
+		x := strings.Index(string(row.render), query)
+		if x > -1 {
+			E.cy = i
+			E.cx = x
+			E.rowoff = E.numRows
+			break
+		}
+	}
 }
 
 /*** input ***/
