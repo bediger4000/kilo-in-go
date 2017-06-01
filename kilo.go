@@ -248,7 +248,7 @@ func editorRowCxToRx(row *erow, cx int) int {
 	return rx
 }
 
-func editorRowRxtoCx(row *erow, rx int) int {
+func editorRowRxToCx(row *erow, rx int) int {
 	curRx := 0
 	var cx int
 	for cx := 0; cx < row.size; cx++ {
@@ -465,7 +465,7 @@ func editorFind() {
 		x := strings.Index(string(row.render), query)
 		if x > -1 {
 			E.cy = i
-			E.cx = x
+			E.cx = editorRowRxToCx(&row, x)
 			E.rowoff = E.numRows
 			break
 		}
