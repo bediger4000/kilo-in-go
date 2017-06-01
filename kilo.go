@@ -251,7 +251,7 @@ func editorRowCxToRx(row *erow, cx int) int {
 func editorRowRxToCx(row *erow, rx int) int {
 	curRx := 0
 	var cx int
-	for cx := 0; cx < row.size; cx++ {
+	for cx = 0; cx < row.size; cx++ {
 		if row.chars[cx] == '\t' {
 			curRx += (KILO_TAB_STOP - 1) - (curRx % KILO_TAB_STOP)
 		}
@@ -566,6 +566,8 @@ func editorProcessKeypress() {
 		if E.cy < E.numRows {
 			E.cx = E.rows[E.cy].size
 		}
+	case ('f' & 0x1f):
+		editorFind()
 	case ('h' & 0x1f), BACKSPACE, DEL_KEY:
 		if c == DEL_KEY { editorMoveCursor(ARROW_RIGHT) }
 		editorDelChar()
@@ -743,7 +745,7 @@ func main() {
 		editorOpen(os.Args[1])
 	}
 
-	editorSetStatusMessage("HELP: Ctrl-S = save | Ctrl-Q = quit")
+	editorSetStatusMessage("HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find")
 
 	for {
 		editorRefreshScreen()
