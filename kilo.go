@@ -458,8 +458,22 @@ func editorSave() {
 
 /*** find ***/
 
+var lastMatch int = -1
+var direction int = 1
+
 func editorFindCallback(query []byte, key int) {
-	if key == '\r' || key == '\x1b' { return }
+	if key == '\r' || key == '\x1b' {
+		lastMatch = -1
+		direction = 1
+		return
+	} else if key == ARROW_RIGHT || key == ARROW_DOWN {
+		direction = 1
+	} else if key == ARROW_LEFT  || key == ARROW_UP   {
+		direction = -1
+	} else {
+		lastMatch = -1
+		direction = 1
+	}
 	qry := string(query)
 	for i, row := range E.rows {
 		x := strings.Index(string(row.render), qry)
