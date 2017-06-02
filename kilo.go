@@ -458,11 +458,11 @@ func editorSave() {
 
 /*** find ***/
 
-func editorFind() {
-	query := editorPrompt("Search: %s (ESC to cancel)", nil)
-	if query == "" { return }
+func editorFindCallback(query []byte, key int) {
+	if key == '\r' || key == '\x1b' { return }
+	qry := string(query)
 	for i, row := range E.rows {
-		x := strings.Index(string(row.render), query)
+		x := strings.Index(string(row.render), qry)
 		if x > -1 {
 			E.cy = i
 			E.cx = editorRowRxToCx(&row, x)
@@ -470,6 +470,10 @@ func editorFind() {
 			break
 		}
 	}
+}
+
+func editorFind() {
+	editorPrompt("Search: %s (ESC to cancel)", editorFindCallback)
 }
 
 /*** input ***/
