@@ -473,7 +473,17 @@ func editorFindCallback(query []byte, key int) {
 }
 
 func editorFind() {
-	editorPrompt("Search: %s (ESC to cancel)", editorFindCallback)
+	savedCx     := E.cx
+	savedCy     := E.cy
+	savedColoff := E.coloff
+	savedRowoff := E.rowoff
+	query := editorPrompt("Search: %s (ESC to cancel)", editorFindCallback)
+	if query == "" {
+		E.cx = savedCx
+		E.cy = savedCy
+		E.coloff = savedColoff
+		E.rowoff = savedRowoff
+	}
 }
 
 /*** input ***/
