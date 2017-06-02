@@ -474,7 +474,7 @@ func editorFind() {
 
 /*** input ***/
 
-func editorPrompt(prompt string) string {
+func editorPrompt(prompt string, callback func([]byte,int)) string {
 	var buf []byte
 
 	for {
@@ -489,16 +489,25 @@ func editorPrompt(prompt string) string {
 			}
 		} else if c == '\x1b' {
 			editorSetStatusMessage("")
+			if callback != nil {
+				callback(buf, c)
+			}
 			return ""
 		} else if c == '\r' {
 			if len(buf) != 0 {
 				editorSetStatusMessage("")
+				if callback != nil {
+					callback(buf, c)
+				}
 				return string(buf)
 			}
 		} else {
 			if c >= 0x20 && c < 128 {
 				buf = append(buf, byte(c))
 			}
+		}
+		if callback != nil {
+			callback(buf, c)
 		}
 	}
 }
