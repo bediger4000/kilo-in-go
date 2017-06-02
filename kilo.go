@@ -430,7 +430,7 @@ func editorOpen(filename string) {
 
 func editorSave() {
 	if E.filename == "" {
-		E.filename = editorPrompt("Save as: %q")
+		E.filename = editorPrompt("Save as: %q", nil)
 		if E.filename == "" {
 			editorSetStatusMessage("Save aborted")
 			return
@@ -459,7 +459,7 @@ func editorSave() {
 /*** find ***/
 
 func editorFind() {
-	query := editorPrompt("Search: %s (ESC to cancel)")
+	query := editorPrompt("Search: %s (ESC to cancel)", nil)
 	if query == "" { return }
 	for i, row := range E.rows {
 		x := strings.Index(string(row.render), query)
