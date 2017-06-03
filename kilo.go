@@ -461,7 +461,7 @@ func editorSave() {
 var lastMatch int = -1
 var direction int = 1
 
-func editorFindCallback(query []byte, key int) {
+func editorFindCallback(qry []byte, key int) {
 	if key == '\r' || key == '\x1b' {
 		lastMatch = -1
 		direction = 1
@@ -474,12 +474,24 @@ func editorFindCallback(query []byte, key int) {
 		lastMatch = -1
 		direction = 1
 	}
-	qry := string(query)
-	for i, row := range E.rows {
-		x := strings.Index(string(row.render), qry)
+
+	if lastMatch == -1 { direction = 1 }
+	current := lastMatch
+
+	query := string(qry)
+	for _ = range E.rows {
+		current += direction
+		if current == -1 {
+			current = E.numRows - 1
+		} else if current == E.numRows {
+			current = 0
+		}
+		row := &E.rows[current]
+		x := strings.Index(string(row.render), query)
 		if x > -1 {
-			E.cy = i
-			E.cx = editorRowRxToCx(&row, x)
+			lastMatch = current
+			E.cy = current
+			E.cx = editorRowRxToCx(row, x)
 			E.rowoff = E.numRows
 			break
 		}
