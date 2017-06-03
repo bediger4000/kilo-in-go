@@ -503,7 +503,8 @@ func editorFind() {
 	savedCy     := E.cy
 	savedColoff := E.coloff
 	savedRowoff := E.rowoff
-	query := editorPrompt("Search: %s (ESC to cancel)", editorFindCallback)
+	query := editorPrompt("Search: %s (ESC/Arrows/Enter)",
+		editorFindCallback)
 	if query == "" {
 		E.cx = savedCx
 		E.cy = savedCy
