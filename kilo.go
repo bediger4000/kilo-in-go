@@ -9,6 +9,7 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	"unicode"
 	"unsafe"
 )
 
@@ -664,6 +665,10 @@ func (p *abuf) abAppendBytes(b []byte) {
 	p.buf = append(p.buf, b...)
 }
 
+func (p *abuf) abAppendByte(b byte) {
+	p.buf = append(p.buf, b)
+}
+
 /*** output ***/
 
 func editorScroll() {
@@ -727,7 +732,15 @@ func editorDrawRows(ab *abuf) {
 			if len > 0 {
 				if len > E.screenCols { len = E.screenCols }
 				rindex := E.coloff+len
-				ab.abAppendBytes(E.rows[filerow].render[E.coloff:rindex])
+				for _, c := range E.rows[filerow].render[E.coloff:rindex] {
+					if unicode.IsDigit(rune(c)) {
+						ab.abAppend("\x1b[31m")
+						ab.abAppendByte(c)
+						ab.abAppend("\x1b[39m")
+					} else {
+						ab.abAppendByte(c)
+					}
+				}
 			}
 		}
 		ab.abAppend("\x1b[K")
