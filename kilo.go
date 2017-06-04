@@ -31,6 +31,11 @@ const (
 	PAGE_DOWN   = 1000 + iota
 )
 
+const (
+	HL_NORMAL = 0
+	HL_NUMBER = iota
+)
+
 /*** data ***/
 
 type Termios struct {
