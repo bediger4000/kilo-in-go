@@ -242,6 +242,17 @@ func getWindowSize(rows *int, cols *int) int {
 	return -1
 }
 
+/*** syntax hightlighting ***/
+
+func editorUpdateSyntax(row *erow) {
+	row.hl = make([]byte, row.rsize)
+	for i, c := range row.render {
+		if unicode.IsDigit(rune(c)) {
+			row.hl[i] = HL_NUMBER
+		}
+	}
+}
+
 /*** row operations ***/
 
 func editorRowCxToRx(row *erow, cx int) int {
