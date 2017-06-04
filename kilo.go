@@ -253,6 +253,14 @@ func editorUpdateSyntax(row *erow) {
 	}
 }
 
+func editorSyntaxToColor(hl byte) byte {
+	switch hl {
+	case HL_NUMBER:
+		return 31
+	}
+	return 37
+}
+
 /*** row operations ***/
 
 func editorRowCxToRx(row *erow, cx int) int {
