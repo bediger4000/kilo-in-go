@@ -253,7 +253,7 @@ func editorUpdateSyntax(row *erow) {
 	}
 }
 
-func editorSyntaxToColor(hl byte) byte {
+func editorSyntaxToColor(hl byte) int {
 	switch hl {
 	case HL_NUMBER:
 		return 31
@@ -759,14 +759,21 @@ func editorDrawRows(ab *abuf) {
 				if len > E.screenCols { len = E.screenCols }
 				rindex := E.coloff+len
 				hl := E.rows[filerow].hl[E.coloff:rindex]
+				currentColor := -1
 				for j, c := range E.rows[filerow].render[E.coloff:rindex] {
 					if hl[j] == HL_NORMAL {
-						ab.abAppend("\x1b[39m")
+						if currentColor != -1 {
+							ab.abAppend("\x1b[39m")
+							currentColor = -1
+						}
 						ab.abAppendByte(c)
 					} else {
 						color := editorSyntaxToColor(hl[j])
-						buf := fmt.Sprintf("\x1b[%dm", color)
-						ab.abAppend(buf)
+						if color != currentColor {
+							currentColor = color
+							buf := fmt.Sprintf("\x1b[%dm", color)
+							ab.abAppend(buf)
+						}
 						ab.abAppendByte(c)
 					}
 				}
