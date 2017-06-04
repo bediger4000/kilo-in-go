@@ -758,15 +758,19 @@ func editorDrawRows(ab *abuf) {
 			if len > 0 {
 				if len > E.screenCols { len = E.screenCols }
 				rindex := E.coloff+len
-				for _, c := range E.rows[filerow].render[E.coloff:rindex] {
-					if unicode.IsDigit(rune(c)) {
-						ab.abAppend("\x1b[31m")
-						ab.abAppendByte(c)
+				hl := E.rows[filerow].hl[E.coloff:rindex]
+				for j, c := range E.rows[filerow].render[E.coloff:rindex] {
+					if hl[j] == HL_NORMAL {
 						ab.abAppend("\x1b[39m")
+						ab.abAppendByte(c)
 					} else {
+						color := editorSyntaxToColor(hl[j])
+						buf := fmt.Sprintf("\x1b[%dm", color)
+						ab.abAppend(buf)
 						ab.abAppendByte(c)
 					}
 				}
+				ab.abAppend("\x1b[39m")
 			}
 		}
 		ab.abAppend("\x1b[K")
