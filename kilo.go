@@ -304,6 +304,7 @@ func editorUpdateRow(row *erow) {
 		}
 	}
 	row.rsize = idx
+	editorUpdateSyntax(row)
 }
 
 func editorInsertRow(at int, s []byte) {
