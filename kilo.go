@@ -48,6 +48,7 @@ type erow struct {
 	rsize  int
 	chars  []byte
 	render []byte
+	hl     []byte
 }
 
 type editorConfig struct {
