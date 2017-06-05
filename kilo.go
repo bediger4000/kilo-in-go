@@ -523,6 +523,10 @@ func editorFindCallback(qry []byte, key int) {
 			E.cy = current
 			E.cx = editorRowRxToCx(row, x)
 			E.rowoff = E.numRows
+			max := x + len(query)
+			for i := x; i < max; i++ {
+				row.hl[i] = HL_MATCH
+			}
 			break
 		}
 	}
