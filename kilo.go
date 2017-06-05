@@ -34,6 +34,7 @@ const (
 const (
 	HL_NORMAL = 0
 	HL_NUMBER = iota
+	HL_MATCH  = iota
 )
 
 /*** data ***/
@@ -257,6 +258,8 @@ func editorSyntaxToColor(hl byte) int {
 	switch hl {
 	case HL_NUMBER:
 		return 31
+	case HL_MATCH:
+		return 34
 	}
 	return 37
 }
