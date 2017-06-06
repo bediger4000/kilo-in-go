@@ -691,28 +691,6 @@ func editorProcessKeypress() {
 	quitTimes = KILO_QUIT_TIMES
 }
 
-/*** append buffer ***/
-
-type abuf struct {
-	buf []byte
-}
-
-func (p abuf) String() string {
-	return string(p.buf)
-}
-
-func (p *abuf) abAppend(s string) {
-	p.buf = append(p.buf, []byte(s)...)
-}
-
-func (p *abuf) abAppendBytes(b []byte) {
-	p.buf = append(p.buf, b...)
-}
-
-func (p *abuf) abAppendByte(b byte) {
-	p.buf = append(p.buf, b)
-}
-
 /*** output ***/
 
 func editorScroll() {
@@ -738,21 +716,20 @@ func editorScroll() {
 
 func editorRefreshScreen() {
 	editorScroll()
-	var ab abuf
-	ab.abAppend("\x1b[25l")
-	ab.abAppend("\x1b[H")
-	editorDrawRows(&ab)
-	editorDrawStatusBar(&ab)
-	editorDrawMessageBar(&ab)
-	ab.abAppend(fmt.Sprintf("\x1b[%d;%dH", (E.cy - E.rowoff) + 1, (E.rx - E.coloff) + 1))
-	ab.abAppend("\x1b[?25h")
-	_, e := io.WriteString(os.Stdout, ab.String())
+	ab := bytes.NewBufferString("\x1b[25l")
+	ab.WriteString("\x1b[H")
+	editorDrawRows(ab)
+	editorDrawStatusBar(ab)
+	editorDrawMessageBar(ab)
+	ab.WriteString(fmt.Sprintf("\x1b[%d;%dH", (E.cy - E.rowoff) + 1, (E.rx - E.coloff) + 1))
+	ab.WriteString("\x1b[?25h")
+	_, e := ab.WriteTo(os.Stdout)
 	if e != nil {
 		log.Fatal(e)
 	}
 }
 
-func editorDrawRows(ab *abuf) {
+func editorDrawRows(ab *bytes.Buffer) {
 	for y := 0; y < E.screenRows; y++ {
 		filerow := y + E.rowoff
 		if filerow >= E.numRows {
@@ -763,12 +740,12 @@ func editorDrawRows(ab *abuf) {
 				}
 				pad := "~ "
 				for padding := (E.screenCols - len(w)) / 2; padding > 0; padding-- {
-					ab.abAppend(pad)
+					ab.WriteString(pad)
 					pad = " "
 				}
-				ab.abAppend(w)
+				ab.WriteString(w)
 			} else {
-				ab.abAppend("~")
+				ab.WriteString("~")
 			}
 		} else {
 			len := E.rows[filerow].rsize - E.coloff
@@ -781,31 +758,31 @@ func editorDrawRows(ab *abuf) {
 				for j, c := range E.rows[filerow].render[E.coloff:rindex] {
 					if hl[j] == HL_NORMAL {
 						if currentColor != -1 {
-							ab.abAppend("\x1b[39m")
+							ab.WriteString("\x1b[39m")
 							currentColor = -1
 						}
-						ab.abAppendByte(c)
+						ab.WriteByte(c)
 					} else {
 						color := editorSyntaxToColor(hl[j])
 						if color != currentColor {
 							currentColor = color
 							buf := fmt.Sprintf("\x1b[%dm", color)
-							ab.abAppend(buf)
+							ab.WriteString(buf)
 						}
-						ab.abAppendByte(c)
+						ab.WriteByte(c)
 					}
 				}
-				ab.abAppend("\x1b[39m")
+				ab.WriteString("\x1b[39m")
 			}
 		}
-		ab.abAppend("\x1b[K")
-		ab.abAppend("\r\n")
+		ab.WriteString("\x1b[K")
+		ab.WriteString("\r\n")
 
 	}
 }
 
-func editorDrawStatusBar(ab *abuf) {
-	ab.abAppend("\x1b[7m")
+func editorDrawStatusBar(ab *bytes.Buffer) {
+	ab.WriteString("\x1b[7m")
 	fname := E.filename
 	if len(fname) == 0 {
 		fname = "[No Name]"
@@ -817,26 +794,26 @@ func editorDrawStatusBar(ab *abuf) {
 	if ln > E.screenCols { ln = E.screenCols }
 	rstatus := fmt.Sprintf("%d/%d", E.cy+1, E.numRows)
 	rlen := len(rstatus)
-	ab.abAppend(status[:ln])
+	ab.WriteString(status[:ln])
 	for ln < E.screenCols {
 		if E.screenCols - ln == rlen {
-			ab.abAppend(rstatus)
+			ab.WriteString(rstatus)
 			break
 		} else {
-			ab.abAppend(" ")
+			ab.WriteString(" ")
 			ln++
 		}
 	}
-	ab.abAppend("\x1b[m")
-	ab.abAppend("\r\n")
+	ab.WriteString("\x1b[m")
+	ab.WriteString("\r\n")
 }
 
-func editorDrawMessageBar(ab *abuf) {
-	ab.abAppend("\x1b[K")
+func editorDrawMessageBar(ab *bytes.Buffer) {
+	ab.WriteString("\x1b[K")
 	msglen := len(E.statusmsg)
 	if msglen > E.screenCols { msglen = E.screenCols }
 	if msglen > 0 && (time.Now().Sub(E.statusmsg_time) < 5*time.Second) {
-		ab.abAppend(E.statusmsg)
+		ab.WriteString(E.statusmsg)
 	}
 }
 
