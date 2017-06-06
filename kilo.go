@@ -92,6 +92,16 @@ type WinSize struct {
 
 var E editorConfig
 
+/*** filetypes ***/
+
+var HLDB []editorSyntax = []editorSyntax{
+	editorSyntax{
+		filetype:"c",
+		filematch:[]string{".c", ".h", ".cpp"},
+		flags:HL_HIGHLIGHT_NUMBERS,
+	},
+}
+
 /*** terminal ***/
 
 func die(err error) {
