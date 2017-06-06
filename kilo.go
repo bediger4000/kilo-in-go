@@ -36,6 +36,10 @@ const (
 	HL_MATCH  = iota
 )
 
+const (
+	HL_HIGHLIGHT_NUMBERS = 1 << 0
+)
+
 /*** data ***/
 
 type editorSyntax struct {
