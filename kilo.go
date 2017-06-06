@@ -490,8 +490,17 @@ func editorSave() {
 
 var lastMatch int = -1
 var direction int = 1
+var savedHlLine int
+var savedHl []byte
 
 func editorFindCallback(qry []byte, key int) {
+
+	if savedHlLine > 0 {
+		copy(E.rows[savedHlLine].hl, savedHl)
+		savedHlLine = 0
+		savedHl = nil
+	}
+
 	if key == '\r' || key == '\x1b' {
 		lastMatch = -1
 		direction = 1
@@ -523,6 +532,9 @@ func editorFindCallback(qry []byte, key int) {
 			E.cy = current
 			E.cx = editorRowRxToCx(row, x)
 			E.rowoff = E.numRows
+			savedHlLine = current
+			savedHl = make([]byte, row.rsize)
+			copy(savedHl, row.hl)
 			max := x + len(query)
 			for i := x; i < max; i++ {
 				row.hl[i] = HL_MATCH
