@@ -259,7 +259,9 @@ func editorUpdateSyntax(row *erow) {
 		if i > 0 {
 			prevHl = row.hl[i - 1]
 		}
-		if (c >= '0' && c <= '9') && (prevSep || prevHl == HL_NUMBER) {
+		if (c >= '0' && c <= '9') && (prevSep ||
+			prevHl == HL_NUMBER) ||
+			(c == '.' && prevHl == HL_NUMBER) {
 			row.hl[i] = HL_NUMBER
 			prevSep = false
 			continue
