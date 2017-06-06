@@ -38,6 +38,12 @@ const (
 
 /*** data ***/
 
+type editorSyntax struct {
+	filetype  string
+	filematch []string
+	flags     int
+}
+
 type Termios struct {
 	Iflag  uint32
 	Oflag  uint32
