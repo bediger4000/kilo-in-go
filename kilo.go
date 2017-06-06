@@ -9,7 +9,6 @@ import (
 	"os"
 	"syscall"
 	"time"
-	"unicode"
 	"unsafe"
 )
 
@@ -244,13 +243,28 @@ func getWindowSize(rows *int, cols *int) int {
 }
 
 /*** syntax hightlighting ***/
+var separators []byte = []byte(",.()+-/*=~%<>[]; \t\n\r")
+func isSeparator(c byte) bool {
+	if bytes.IndexByte(separators, c) >= 0 {
+		return true
+	}
+	return false
+}
 
 func editorUpdateSyntax(row *erow) {
 	row.hl = make([]byte, row.rsize)
+	prevSep := true
+	var prevHl byte = HL_NORMAL
 	for i, c := range row.render {
-		if unicode.IsDigit(rune(c)) {
-			row.hl[i] = HL_NUMBER
+		if i > 0 {
+			prevHl = row.hl[i - 1]
 		}
+		if (c >= '0' && c <= '9') && (prevSep || prevHl == HL_NUMBER) {
+			row.hl[i] = HL_NUMBER
+			prevSep = false
+			continue
+		}
+		prevSep = isSeparator(c)
 	}
 }
 
