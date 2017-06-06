@@ -2,11 +2,11 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"log"
 	"os"
-	"strings"
 	"syscall"
 	"time"
 	"unicode"
@@ -517,7 +517,6 @@ func editorFindCallback(qry []byte, key int) {
 	if lastMatch == -1 { direction = 1 }
 	current := lastMatch
 
-	query := string(qry)
 	for _ = range E.rows {
 		current += direction
 		if current == -1 {
@@ -526,7 +525,7 @@ func editorFindCallback(qry []byte, key int) {
 			current = 0
 		}
 		row := &E.rows[current]
-		x := strings.Index(string(row.render), query)
+		x := bytes.Index(row.render, qry)
 		if x > -1 {
 			lastMatch = current
 			E.cy = current
@@ -535,7 +534,7 @@ func editorFindCallback(qry []byte, key int) {
 			savedHlLine = current
 			savedHl = make([]byte, row.rsize)
 			copy(savedHl, row.hl)
-			max := x + len(query)
+			max := x + len(qry)
 			for i := x; i < max; i++ {
 				row.hl[i] = HL_MATCH
 			}
