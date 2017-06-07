@@ -821,7 +821,7 @@ func editorDrawRows(ab *bytes.Buffer) {
 func editorDrawStatusBar(ab *bytes.Buffer) {
 	ab.WriteString("\x1b[7m")
 	fname := E.filename
-	if len(fname) == 0 {
+	if fname == "" {
 		fname = "[No Name]"
 	}
 	modified := ""
@@ -829,7 +829,11 @@ func editorDrawStatusBar(ab *bytes.Buffer) {
 	status := fmt.Sprintf("%.20s - %d lines %s", fname, E.numRows, modified)
 	ln := len(status)
 	if ln > E.screenCols { ln = E.screenCols }
-	rstatus := fmt.Sprintf("%d/%d", E.cy+1, E.numRows)
+	filetype := "no ft"
+	if E.syntax != nil {
+		filetype = E.syntax.filetype
+	}
+	rstatus := fmt.Sprintf("%s | %d/%d", filetype, E.cy+1, E.numRows)
 	rlen := len(rstatus)
 	ab.WriteString(status[:ln])
 	for ln < E.screenCols {
