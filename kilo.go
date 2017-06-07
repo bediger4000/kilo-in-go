@@ -80,7 +80,7 @@ type editorConfig struct {
 	filename    string
 	statusmsg   string
 	statusmsg_time time.Time
-    syntax *editorSyntax
+    syntax      *editorSyntax
 	origTermios *Termios
 }
 
