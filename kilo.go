@@ -274,18 +274,21 @@ func isSeparator(c byte) bool {
 
 func editorUpdateSyntax(row *erow) {
 	row.hl = make([]byte, row.rsize)
+	if E.syntax == nil { return }
 	prevSep := true
 	var prevHl byte = HL_NORMAL
 	for i, c := range row.render {
 		if i > 0 {
 			prevHl = row.hl[i - 1]
 		}
-		if (c >= '0' && c <= '9') && (prevSep ||
-			prevHl == HL_NUMBER) ||
-			(c == '.' && prevHl == HL_NUMBER) {
-			row.hl[i] = HL_NUMBER
-			prevSep = false
-			continue
+		if (E.syntax.flags & HL_HIGHLIGHT_NUMBERS) == HL_HIGHLIGHT_NUMBERS {
+			if (c >= '0' && c <= '9') &&
+				(prevSep || prevHl == HL_NUMBER) ||
+				(c == '.' && prevHl == HL_NUMBER) {
+				row.hl[i] = HL_NUMBER
+				prevSep = false
+				continue
+			}
 		}
 		prevSep = isSeparator(c)
 	}
