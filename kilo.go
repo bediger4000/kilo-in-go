@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 	"syscall"
 	"time"
 	"unsafe"
@@ -302,6 +303,20 @@ func editorSyntaxToColor(hl byte) int {
 		return 34
 	}
 	return 37
+}
+
+func editorSelectSyntaxHighlight() {
+	E.syntax = nil
+	if E.filename == "" { return }
+
+	for _, s := range HLDB {
+		for _, suffix := range s.filematch {
+			if strings.HasSuffix(E.filename, suffix) {
+				E.syntax = &s
+				return
+			}
+		}
+	}
 }
 
 /*** row operations ***/
