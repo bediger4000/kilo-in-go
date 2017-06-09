@@ -281,13 +281,23 @@ func editorUpdateSyntax(row *erow) {
 	prevSep  := true
 	var inString byte = 0
 	var prevHl byte = HL_NORMAL
+	var skip = false
 	for i, c := range row.render {
+		if skip {
+			skip = false
+			continue
+		}
 		if i > 0 {
 			prevHl = row.hl[i - 1]
 		}
 		if (E.syntax.flags & HL_HIGHLIGHT_STRINGS) == HL_HIGHLIGHT_STRINGS {
 			if inString != 0 {
 				row.hl[i] = HL_STRING
+				if c == '\\' && i + 1 < row.rsize {
+					row.hl[i+1] = HL_STRING
+					skip = true
+					continue
+				}
 				if c == inString { inString = 0 }
 				prevSep = true
 				continue
