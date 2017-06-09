@@ -49,6 +49,7 @@ const (
 type editorSyntax struct {
 	filetype  string
 	filematch []string
+    singleLineCommentStart string
 	flags     int
 }
 
@@ -103,6 +104,7 @@ var HLDB []editorSyntax = []editorSyntax{
 	editorSyntax{
 		filetype:"c",
 		filematch:[]string{".c", ".h", ".cpp"},
+		singleLineCommentStart:"//",
 		flags:HL_HIGHLIGHT_NUMBERS|HL_HIGHLIGHT_STRINGS,
 	},
 }
