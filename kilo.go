@@ -32,10 +32,11 @@ const (
 )
 
 const (
-	HL_NORMAL = 0
-	HL_STRING = iota
-	HL_NUMBER = iota
-	HL_MATCH  = iota
+	HL_NORMAL  = 0
+	HL_COMMENT = iota
+	HL_STRING  = iota
+	HL_NUMBER  = iota
+	HL_MATCH   = iota
 )
 
 const (
@@ -324,6 +325,8 @@ func editorUpdateSyntax(row *erow) {
 
 func editorSyntaxToColor(hl byte) int {
 	switch hl {
+	case HL_COMMENT:
+		return 36
 	case HL_STRING:
 		return 35
 	case HL_NUMBER:
