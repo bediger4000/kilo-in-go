@@ -306,7 +306,6 @@ func editorSyntaxToColor(hl byte) int {
 }
 
 func editorSelectSyntaxHighlight() {
-	E.syntax = nil
 	if E.filename == "" { return }
 
 	for _, s := range HLDB {
@@ -489,6 +488,7 @@ func editorRowsToString() (string, int) {
 
 func editorOpen(filename string) {
 	E.filename = filename
+	editorSelectSyntaxHighlight()
 	fd, err := os.Open(filename)
 	if err != nil {
 		die(err)
@@ -520,6 +520,7 @@ func editorSave() {
 			editorSetStatusMessage("Save aborted")
 			return
 		}
+		editorSelectSyntaxHighlight()
 	}
 	buf, len := editorRowsToString()
 	fp,e := os.OpenFile(E.filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
