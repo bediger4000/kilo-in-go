@@ -40,6 +40,7 @@ const (
 
 const (
 	HL_HIGHLIGHT_NUMBERS = 1 << 0
+	HL_HIGHLIGHT_STRINGS = 1 << iota
 )
 
 /*** data ***/
@@ -101,7 +102,7 @@ var HLDB []editorSyntax = []editorSyntax{
 	editorSyntax{
 		filetype:"c",
 		filematch:[]string{".c", ".h", ".cpp"},
-		flags:HL_HIGHLIGHT_NUMBERS,
+		flags:HL_HIGHLIGHT_NUMBERS|HL_HIGHLIGHT_STRINGS,
 	},
 }
 
