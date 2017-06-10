@@ -51,6 +51,7 @@ const (
 type editorSyntax struct {
 	filetype  string
 	filematch []string
+	keywords  []string
     singleLineCommentStart []byte
 	flags     int
 }
@@ -106,6 +107,12 @@ var HLDB []editorSyntax = []editorSyntax{
 	editorSyntax{
 		filetype:"c",
 		filematch:[]string{".c", ".h", ".cpp"},
+		keywords:[]string{"switch", "if", "while", "for",
+			"break", "continue", "return", "else", "struct",
+			"union", "typedef", "static", "enum", "class", "case",
+			"int|", "long|", "double|", "float|", "char|",
+			"unsigned|", "signed|", "void|",
+		},
 		singleLineCommentStart:[]byte{'/', '/'},
 		flags:HL_HIGHLIGHT_NUMBERS|HL_HIGHLIGHT_STRINGS,
 	},
