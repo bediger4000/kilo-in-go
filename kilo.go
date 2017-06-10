@@ -49,7 +49,7 @@ const (
 type editorSyntax struct {
 	filetype  string
 	filematch []string
-    singleLineCommentStart string
+    singleLineCommentStart []byte
 	flags     int
 }
 
@@ -104,7 +104,7 @@ var HLDB []editorSyntax = []editorSyntax{
 	editorSyntax{
 		filetype:"c",
 		filematch:[]string{".c", ".h", ".cpp"},
-		singleLineCommentStart:"//",
+		singleLineCommentStart:[]byte{'/', '/'},
 		flags:HL_HIGHLIGHT_NUMBERS|HL_HIGHLIGHT_STRINGS,
 	},
 }
@@ -281,6 +281,7 @@ func isSeparator(c byte) bool {
 func editorUpdateSyntax(row *erow) {
 	row.hl = make([]byte, row.rsize)
 	if E.syntax == nil { return }
+	scs := E.syntax.singleLineCommentStart
 	prevSep  := true
 	var inString byte = 0
 	var prevHl byte = HL_NORMAL
@@ -289,6 +290,14 @@ func editorUpdateSyntax(row *erow) {
 		if skip {
 			skip = false
 			continue
+		}
+		if inString == 0 && len(scs) > 0 {
+			if bytes.HasPrefix(row.render[i:], scs) {
+				for j := i; j < row.rsize; j++ {
+					row.hl[j] = HL_COMMENT
+				}
+				break
+			}
 		}
 		if i > 0 {
 			prevHl = row.hl[i - 1]
