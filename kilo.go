@@ -290,14 +290,14 @@ func isSeparator(c byte) bool {
 func editorUpdateSyntax(row *erow) {
 	row.hl = make([]byte, row.rsize)
 	if E.syntax == nil { return }
+	keywords := E.syntax.keywords[:]
 	scs := E.syntax.singleLineCommentStart
 	prevSep  := true
 	var inString byte = 0
-	var prevHl byte = HL_NORMAL
-	var skip = false
+	var skip = 0
 	for i, c := range row.render {
-		if skip {
-			skip = false
+		if skip > 0 {
+			skip--
 			continue
 		}
 		if inString == 0 && len(scs) > 0 {
@@ -308,6 +308,7 @@ func editorUpdateSyntax(row *erow) {
 				break
 			}
 		}
+		var prevHl byte = HL_NORMAL
 		if i > 0 {
 			prevHl = row.hl[i - 1]
 		}
@@ -316,7 +317,7 @@ func editorUpdateSyntax(row *erow) {
 				row.hl[i] = HL_STRING
 				if c == '\\' && i + 1 < row.rsize {
 					row.hl[i+1] = HL_STRING
-					skip = true
+					skip = 1
 					continue
 				}
 				if c == inString { inString = 0 }
@@ -335,6 +336,33 @@ func editorUpdateSyntax(row *erow) {
 				(prevSep || prevHl == HL_NUMBER) ||
 				(c == '.' && prevHl == HL_NUMBER) {
 				row.hl[i] = HL_NUMBER
+				prevSep = false
+				continue
+			}
+		}
+		if prevSep {
+			var j int
+			var skw string
+			for j, skw = range keywords {
+				kw := []byte(skw)
+				var color byte = HL_KEYWORD1
+				idx := bytes.LastIndexByte(kw, '|')
+				if idx > 0 {
+					kw = kw[:idx]
+					color = HL_KEYWORD2
+				}
+				klen := len(kw)
+				if bytes.HasPrefix(row.render[i:], kw) &&
+					(len(row.render[i:]) == klen ||
+					isSeparator(row.render[i+klen])) {
+					for l := i; l < i+klen; l++ {
+						row.hl[l] = color
+					}
+					skip = klen - 1
+					break
+				}
+			}
+			if j < len(keywords) - 1 {
 				prevSep = false
 				continue
 			}
