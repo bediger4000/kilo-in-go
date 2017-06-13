@@ -55,6 +55,8 @@ type editorSyntax struct {
 	filematch []string
 	keywords  []string
     singleLineCommentStart []byte
+    multiLineCommentStart  []byte
+    multiLineCommentEnd    []byte
 	flags     int
 }
 
@@ -116,6 +118,8 @@ var HLDB []editorSyntax = []editorSyntax{
 			"unsigned|", "signed|", "void|",
 		},
 		singleLineCommentStart:[]byte{'/', '/'},
+		multiLineCommentStart:[]byte{'/', '*'},
+		multiLineCommentEnd:[]byte{'*', '/'},
 		flags:HL_HIGHLIGHT_NUMBERS|HL_HIGHLIGHT_STRINGS,
 	},
 }
