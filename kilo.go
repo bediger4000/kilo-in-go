@@ -298,6 +298,8 @@ func editorUpdateSyntax(row *erow) {
 	if E.syntax == nil { return }
 	keywords := E.syntax.keywords[:]
 	scs := E.syntax.singleLineCommentStart
+	mcs := E.syntax.multiLineCommentStart
+	mce := E.syntax.multiLineCommentEnd
 	prevSep  := true
 	var inString byte = 0
 	var skip = 0
