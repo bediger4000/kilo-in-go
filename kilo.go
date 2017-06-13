@@ -494,6 +494,8 @@ func editorInsertRow(at int, s []byte) {
 	r.size = len(s)
 	r.idx = at
 
+	for j := at + 1; j <= E.numRows; j++ { E.rows[j].idx++ }
+
 	if at == 0 {
 		t := make([]erow, 1)
 		t[0] = r
@@ -516,6 +518,7 @@ func editorDelRow(at int) {
 	E.rows = append(E.rows[:at], E.rows[at+1:]...)
 	E.numRows--
 	E.dirty = true
+	for j := at; j < E.numRows; j++ { E.rows[j].idx-- }
 }
 
 func editorRowInsertChar(row *erow, at int, c byte) {
