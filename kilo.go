@@ -300,7 +300,8 @@ func editorUpdateSyntax(row *erow) {
 	scs := E.syntax.singleLineCommentStart
 	mcs := E.syntax.multiLineCommentStart
 	mce := E.syntax.multiLineCommentEnd
-	prevSep  := true
+	prevSep   := true
+	inComment := false
 	var inString byte = 0
 	var skip = 0
 	for i, c := range row.render {
@@ -314,6 +315,26 @@ func editorUpdateSyntax(row *erow) {
 					row.hl[j] = HL_COMMENT
 				}
 				break
+			}
+		}
+		if inString == 0 && len(mcs) > 0 && len(mce) > 0 {
+			if inComment {
+				row.hl[i] = HL_MLCOMMENT
+				if bytes.HasPrefix(row.render[i:], mce) {
+					for l := i; l < i + len(mce); l++ {
+						row.hl[l] = HL_MLCOMMENT
+					}
+					skip = len(mce)
+					inComment = false
+					prevSep = true
+				}
+				continue
+			} else if bytes.HasPrefix(row.render[i:], mcs) {
+				for l := i; l < i + len(mcs); l++ {
+					row.hl[l] = HL_MLCOMMENT
+				}
+				inComment = true
+				skip = len(mcs)
 			}
 		}
 		var prevHl byte = HL_NORMAL
