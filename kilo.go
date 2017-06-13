@@ -10,6 +10,7 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	"unicode"
 	"unsafe"
 )
 
@@ -332,7 +333,7 @@ func editorUpdateSyntax(row *erow) {
 			}
 		}
 		if (E.syntax.flags & HL_HIGHLIGHT_NUMBERS) == HL_HIGHLIGHT_NUMBERS {
-			if (c >= '0' && c <= '9') &&
+			if unicode.IsDigit(rune(c)) &&
 				(prevSep || prevHl == HL_NUMBER) ||
 				(c == '.' && prevHl == HL_NUMBER) {
 				row.hl[i] = HL_NUMBER
@@ -728,7 +729,8 @@ func editorPrompt(prompt string, callback func([]byte,int)) string {
 				return string(buf)
 			}
 		} else {
-			if c >= 0x20 && c < 128 {
+			//if c >= 0x20 && c < 128 {
+			if unicode.IsPrint(rune(c)) {
 				buf = append(buf, byte(c))
 			}
 		}
@@ -896,7 +898,15 @@ func editorDrawRows(ab *bytes.Buffer) {
 				hl := E.rows[filerow].hl[E.coloff:rindex]
 				currentColor := -1
 				for j, c := range E.rows[filerow].render[E.coloff:rindex] {
-					if hl[j] == HL_NORMAL {
+					if unicode.IsControl(rune(c)) {
+						ab.WriteString("\x1b[7m")
+						if c < 26 {
+							ab.WriteString("@")
+						} else {
+							ab.WriteString("?")
+						}
+						ab.WriteString("\x1b[m")
+					} else if hl[j] == HL_NORMAL {
 						if currentColor != -1 {
 							ab.WriteString("\x1b[39m")
 							currentColor = -1
