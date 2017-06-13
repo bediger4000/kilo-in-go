@@ -309,7 +309,7 @@ func editorUpdateSyntax(row *erow) {
 			skip--
 			continue
 		}
-		if inString == 0 && len(scs) > 0 {
+		if inString == 0 && len(scs) > 0 && !inComment {
 			if bytes.HasPrefix(row.render[i:], scs) {
 				for j := i; j < row.rsize; j++ {
 					row.hl[j] = HL_COMMENT
