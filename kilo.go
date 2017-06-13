@@ -906,6 +906,9 @@ func editorDrawRows(ab *bytes.Buffer) {
 							ab.WriteString("?")
 						}
 						ab.WriteString("\x1b[m")
+						if currentColor != -1 {
+							ab.WriteString(fmt.Sprintf("\x1b[%dm", currentColor))
+						}
 					} else if hl[j] == HL_NORMAL {
 						if currentColor != -1 {
 							ab.WriteString("\x1b[39m")
