@@ -71,11 +71,13 @@ type Termios struct {
 }
 
 type erow struct {
+	idx    int
 	size   int
 	rsize  int
 	chars  []byte
 	render []byte
 	hl     []byte
+	hlOpenComment bool
 }
 
 type editorConfig struct {
@@ -490,16 +492,17 @@ func editorInsertRow(at int, s []byte) {
 	var r erow
 	r.chars = s
 	r.size = len(s)
+	r.idx = at
 
 	if at == 0 {
 		t := make([]erow, 1)
-		t[0] = r	
+		t[0] = r
 		E.rows = append(t, E.rows...)
 	} else if at == E.numRows {
 		E.rows = append(E.rows, r)
 	} else {
 		t := make([]erow, 1)
-		t[0] = r	
+		t[0] = r
 		E.rows = append(E.rows[:at], append(t, E.rows[at:]...)...)
 	}
 
