@@ -303,7 +303,7 @@ func editorUpdateSyntax(row *erow) {
 	mcs := E.syntax.multiLineCommentStart
 	mce := E.syntax.multiLineCommentEnd
 	prevSep   := true
-	inComment := false
+	inComment := row.idx > 0 && E.rows[row.idx-1].hlOpenComment
 	var inString byte = 0
 	var skip = 0
 	for i, c := range row.render {
@@ -400,6 +400,12 @@ func editorUpdateSyntax(row *erow) {
 		}
 		prevSep = isSeparator(c)
 	}
+
+	changed := row.hlOpenComment != inComment
+	row.hlOpenComment = inComment
+	if changed && row.idx + 1 < E.numRows {
+		editorUpdateSyntax(&E.rows[row.idx + 1])
+	}
 }
 
 func editorSyntaxToColor(hl byte) int {
@@ -494,8 +500,6 @@ func editorInsertRow(at int, s []byte) {
 	r.size = len(s)
 	r.idx = at
 
-	for j := at + 1; j <= E.numRows; j++ { E.rows[j].idx++ }
-
 	if at == 0 {
 		t := make([]erow, 1)
 		t[0] = r
@@ -507,6 +511,8 @@ func editorInsertRow(at int, s []byte) {
 		t[0] = r
 		E.rows = append(E.rows[:at], append(t, E.rows[at:]...)...)
 	}
+
+	for j := at + 1; j <= E.numRows; j++ { E.rows[j].idx++ }
 
 	editorUpdateRow(&E.rows[at])
 	E.numRows++
