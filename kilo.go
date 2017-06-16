@@ -769,7 +769,6 @@ func editorPrompt(prompt string, callback func([]byte,int)) string {
 				return string(buf)
 			}
 		} else {
-			//if c >= 0x20 && c < 128 {
 			if unicode.IsPrint(rune(c)) {
 				buf = append(buf, byte(c))
 			}
@@ -970,7 +969,6 @@ func editorDrawRows(ab *bytes.Buffer) {
 		}
 		ab.WriteString("\x1b[K")
 		ab.WriteString("\r\n")
-
 	}
 }
 
