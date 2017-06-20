@@ -40,6 +40,9 @@ all the time was easier.
 
 Slices seem to work well, if you think of them as typed pointers-to-arrays.
 
+The "useful zero value" for new variables means a lot less
+initialization happens than in C, with a lot less room for error.
+
 ## Where I found Go Worse
 
 C's looser idea of what comprises true and false in looping
