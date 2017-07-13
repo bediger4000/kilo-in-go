@@ -18,8 +18,11 @@ I found the two languages comparable in terms of expressiveness.
 I transliterated the C code almost directly into Go. There was
 little difference in line count in the end:
 
-* CKilo: 971 lines of ANSI C (Using [sloccount](http://www.dwheeler.com/sloccount/))
-* GoKilo: 942 lines of Go (by hand)
+    Language  Files  Code    Comment  Blank  Total
+        Go      1     797      163     86     1044
+         C      1     757      152    161     1068
+
+That's according to [sloc](http://git.bytbox.net/sloc)
 
 ## Where I found Go Better
 
